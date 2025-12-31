@@ -43,15 +43,19 @@ safe_numeric <- function(x) {
 
 #' Get available years for Rhode Island enrollment data
 #'
-#' Returns the range of years available in the RIDE Data Center.
-#' RIDE provides October 1st enrollment headcounts from 2014-15 onward.
+#' Returns the range of years available from RIDE. The RIDE Data Center
+#' provides October 1st enrollment headcounts with data going back to 2010-11.
+#'
+#' Data Eras:
+#' - Era 1 (2011-2014): Historical data with potentially different format
+#' - Era 2 (2015-present): Current RIDE Data Center format
 #'
 #' @return Integer vector of available end years
 #' @export
 #' @examples
 #' get_available_years()
 get_available_years <- function() {
-  # RIDE Data Center has data from 2014-15 to present
+  # RIDE Data Center has data from 2010-11 to present
   # As of 2025, data is available through 2025-26
-  2015:2026
+  2011:2026
 }

@@ -21,9 +21,11 @@ test_that("safe_numeric handles various inputs", {
 test_that("get_available_years returns expected range", {
   years <- get_available_years()
   expect_true(is.integer(years) || is.numeric(years))
+  expect_true(2011 %in% years)  # Historical data starts at 2011
   expect_true(2015 %in% years)
   expect_true(2024 %in% years)
-  expect_true(min(years) >= 2015)
+  expect_true(min(years) >= 2011)  # Updated to include historical era
+  expect_true(max(years) >= 2025)
 })
 
 test_that("fetch_enr validates year parameter", {
@@ -52,6 +54,19 @@ test_that("build_ride_urls returns valid URLs", {
   expect_true(is.character(urls))
   expect_true(length(urls) > 0)
   expect_true(all(grepl("^https?://", urls)))
+
+  # Test historical year URLs
+  urls_historical <- build_ride_urls(2012)
+  expect_true(is.character(urls_historical))
+  expect_true(length(urls_historical) > 0)
+  expect_true(all(grepl("^https?://", urls_historical)))
+})
+
+test_that("get_schoolyear_id returns correct values", {
+  # Based on research: schoolyearid = end_year - 2000
+  expect_equal(get_schoolyear_id(2011), 11)
+  expect_equal(get_schoolyear_id(2015), 15)
+  expect_equal(get_schoolyear_id(2024), 24)
 })
 
 # Integration tests (require network access)

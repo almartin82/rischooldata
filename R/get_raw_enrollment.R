@@ -20,7 +20,10 @@
 # - Charter status
 #
 # Data Eras:
-# - Era 1 (2015-present): RIDE Data Center with Excel downloads
+# - Era 1 (2011-2014): Historical data from RIDE Data Center
+#   Available through datacenter.ride.ri.gov with schoolyearid parameter
+#   May have different column formats than modern data
+# - Era 2 (2015-present): Current RIDE Data Center format
 #   Files available at datacenter.ride.ri.gov with consistent format
 #
 # ==============================================================================
@@ -115,6 +118,26 @@ download_ride_enrollment <- function(end_year) {
 }
 
 
+#' Get school year ID for RIDE Data Center
+#'
+#' Maps end_year to the schoolyearid parameter used by RIDE Data Center.
+#' Based on observed patterns: schoolyearid=11 corresponds to 2010-11,
+#' schoolyearid=19 corresponds to 2018-19, etc.
+#'
+#' @param end_year School year end
+#' @return Integer schoolyearid for RIDE Data Center
+#' @keywords internal
+get_schoolyear_id <- function(end_year) {
+
+  # schoolyearid appears to be: end_year - 1999
+
+  # e.g., 2011 -> 11, 2015 -> 15, 2024 -> 24
+  # But with offset for older years
+  # Based on research: schoolyearid=11 is 2010-11
+  end_year - 2000
+}
+
+
 #' Build URLs to try for RIDE enrollment downloads
 #'
 #' @param end_year School year end
@@ -126,25 +149,48 @@ build_ride_urls <- function(end_year) {
 
   school_year <- paste0(end_year - 1, "-", substr(end_year, 3, 4))
   school_year_alt <- paste0(end_year - 1, end_year)
+  schoolyear_id <- get_schoolyear_id(end_year)
 
   # Known file ID patterns from research
   # File IDs in the 990-1100+ range are enrollment files
   base_url <- "https://datacenter.ride.ri.gov"
 
+  # Calculate file ID based on year
+
+  # fileid=994 appears to be associated with October enrollment data
+  # For historical years, we need to try different patterns
+  if (end_year >= 2015) {
+    # Modern era - use known file ID patterns
+    file_id_base <- 994
+    file_id_offset <- end_year - 2021
+  } else {
+    # Historical era (2011-2014) - try different file ID ranges
+    file_id_base <- 787  # Observed historical file ID
+    file_id_offset <- end_year - 2011
+  }
+
   urls <- c(
+    # Primary: Enrollment dashboard export
+    paste0(base_url, "/Data/Enrollment?schoolyearid=", schoolyear_id, "&format=excel"),
+
     # Direct data export endpoint
     paste0(base_url, "/Data/ExportData?datatype=enrollment&year=", end_year),
     paste0(base_url, "/Data/ExportData?datatype=October&year=", end_year),
 
     # File download endpoint with various file IDs
-    # These are based on observed file IDs for enrollment data
-    paste0(base_url, "/Home/DownloadFile?fileid=", 994 + (end_year - 2021)),
+    paste0(base_url, "/Home/DownloadFile?fileid=", file_id_base + file_id_offset),
+
+    # School year based search with export
+    paste0(base_url, "/Home/SearchBySchoolYear?schoolyearid=", schoolyear_id, "&export=excel"),
 
     # Report export endpoints
     paste0(base_url, "/Report/Export?report=enrollment&schoolyear=", school_year),
     paste0(base_url, "/Report/Export?report=oct1headcount&schoolyear=", school_year),
 
-    # CSV export
+    # Category-based endpoints (categoryid=246 is enrollment by demographics)
+    paste0(base_url, "/Home/SearchByCategory?categoryid=246&schoolyear=", school_year, "&export=excel"),
+
+    # CSV/API export
     paste0(base_url, "/api/enrollment/", end_year),
     paste0(base_url, "/api/data/enrollment?year=", end_year)
   )

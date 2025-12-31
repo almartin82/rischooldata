@@ -48,3 +48,8 @@ articles:
   - title: "Data Quality"
     contents:
       - data-quality-qa
+
+home:
+  links:
+    - text: "Part of the 50 State Schooldata Family"
+      href: https://github.com/almartin82/njschooldata

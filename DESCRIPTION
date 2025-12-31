@@ -6,7 +6,7 @@ Authors@R:
 Description: Downloads and processes school data from the Rhode Island Department
     of Education (RIDE). Provides functions for fetching enrollment data from
     RIDE's Data Center and transforming it into tidy format for analysis.
-    Supports October 1st Public School Student Headcounts from 2014-2015 to present.
+    Supports October 1st Public School Student Headcounts from 2010-2011 to present.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
