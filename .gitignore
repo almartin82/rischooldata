@@ -1,0 +1,23 @@
+# R package ignores
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+*.Rproj
+
+# Build artifacts
+docs/
+man/*.Rd
+NAMESPACE
+*.tar.gz
+
+# Mac
+.DS_Store
+
+# IDE
+.idea/
+*.swp
+*~
+
+# Test outputs
+tests/testthat/_snaps/

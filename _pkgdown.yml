@@ -1,0 +1,50 @@
+url: https://almartin82.github.io/rischooldata/
+
+template:
+  bootstrap: 5
+  bootswatch: flatly
+
+navbar:
+  structure:
+    left: [intro, reference, articles]
+    right: [search, github]
+  components:
+    github:
+      icon: fa-github
+      href: https://github.com/almartin82/rischooldata
+      aria-label: GitHub
+
+reference:
+  - title: "Fetching Data"
+    desc: "Functions for downloading enrollment data from RIDE"
+    contents:
+      - fetch_enr
+      - fetch_enr_multi
+      - get_available_years
+
+  - title: "Data Transformation"
+    desc: "Functions for transforming and tidying data"
+    contents:
+      - tidy_enr
+      - id_enr_aggs
+      - enr_grade_aggs
+
+  - title: "Caching"
+    desc: "Functions for managing local data cache"
+    contents:
+      - cache_status
+      - clear_cache
+
+  - title: "Utilities"
+    desc: "Helper functions"
+    contents:
+      - pipe
+
+articles:
+  - title: "Getting Started"
+    contents:
+      - quickstart
+
+  - title: "Data Quality"
+    contents:
+      - data-quality-qa
