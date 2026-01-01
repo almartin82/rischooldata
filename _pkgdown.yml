@@ -35,19 +35,10 @@ reference:
       - cache_status
       - clear_cache
 
-  - title: "Utilities"
-    desc: "Helper functions"
-    contents:
-      - pipe
-
 articles:
-  - title: "Getting Started"
+  - title: "Insights"
     contents:
-      - quickstart
-
-  - title: "Data Quality"
-    contents:
-      - data-quality-qa
+      - enrollment_hooks
 
 home:
   links:
