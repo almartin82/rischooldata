@@ -10,6 +10,7 @@ docs/
 man/*.Rd
 NAMESPACE
 *.tar.gz
+..Rcheck/
 
 # Mac
 .DS_Store
