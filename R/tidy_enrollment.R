@@ -21,6 +21,13 @@
 #' }
 tidy_enr <- function(df) {
 
+  # Check if we have valid data
+
+  if (nrow(df) == 0) {
+    warning("Empty dataframe passed to tidy_enr")
+    return(data.frame())
+  }
+
   # Invariant columns (identifiers that stay the same)
   invariants <- c(
     "end_year", "type",
@@ -29,6 +36,12 @@ tidy_enr <- function(df) {
     "charter_flag"
   )
   invariants <- invariants[invariants %in% names(df)]
+
+  # Check for row_total - required for percentage calculations
+  has_row_total <- "row_total" %in% names(df)
+  if (!has_row_total) {
+    warning("row_total column not found in data - percentages will be NA")
+  }
 
   # Demographic subgroups to tidy
   demo_cols <- c(
@@ -53,7 +66,7 @@ tidy_enr <- function(df) {
   all_subgroups <- c(demo_cols, gender_cols, special_cols)
 
   # Transform demographic/special subgroups to long format
-  if (length(all_subgroups) > 0) {
+  if (length(all_subgroups) > 0 && has_row_total) {
     tidy_subgroups <- purrr::map_df(
       all_subgroups,
       function(.x) {
@@ -63,6 +76,22 @@ tidy_enr <- function(df) {
           dplyr::mutate(
             subgroup = .x,
             pct = n_students / row_total,
+            grade_level = "TOTAL"
+          ) |>
+          dplyr::select(dplyr::all_of(c(invariants, "grade_level", "subgroup", "n_students", "pct")))
+      }
+    )
+  } else if (length(all_subgroups) > 0) {
+    # No row_total - create subgroups without percentages
+    tidy_subgroups <- purrr::map_df(
+      all_subgroups,
+      function(.x) {
+        df |>
+          dplyr::rename(n_students = dplyr::all_of(.x)) |>
+          dplyr::select(dplyr::all_of(c(invariants, "n_students"))) |>
+          dplyr::mutate(
+            subgroup = .x,
+            pct = NA_real_,
             grade_level = "TOTAL"
           ) |>
           dplyr::select(dplyr::all_of(c(invariants, "grade_level", "subgroup", "n_students", "pct")))
@@ -88,7 +117,7 @@ tidy_enr <- function(df) {
   }
 
   # Transform grade-level enrollment to long format
-  if (length(grade_cols) > 0) {
+  if (length(grade_cols) > 0 && has_row_total) {
     grade_level_map <- c(
       "grade_pk" = "PK",
       "grade_k" = "K",
@@ -118,6 +147,42 @@ tidy_enr <- function(df) {
           dplyr::mutate(
             subgroup = "total_enrollment",
             pct = n_students / row_total,
+            grade_level = gl
+          ) |>
+          dplyr::select(dplyr::all_of(c(invariants, "grade_level", "subgroup", "n_students", "pct")))
+      }
+    )
+  } else if (length(grade_cols) > 0) {
+    # No row_total - create grade data without percentages
+    grade_level_map <- c(
+      "grade_pk" = "PK",
+      "grade_k" = "K",
+      "grade_01" = "01",
+      "grade_02" = "02",
+      "grade_03" = "03",
+      "grade_04" = "04",
+      "grade_05" = "05",
+      "grade_06" = "06",
+      "grade_07" = "07",
+      "grade_08" = "08",
+      "grade_09" = "09",
+      "grade_10" = "10",
+      "grade_11" = "11",
+      "grade_12" = "12"
+    )
+
+    tidy_grades <- purrr::map_df(
+      grade_cols,
+      function(.x) {
+        gl <- grade_level_map[.x]
+        if (is.na(gl)) gl <- .x
+
+        df |>
+          dplyr::rename(n_students = dplyr::all_of(.x)) |>
+          dplyr::select(dplyr::all_of(c(invariants, "n_students"))) |>
+          dplyr::mutate(
+            subgroup = "total_enrollment",
+            pct = NA_real_,
             grade_level = gl
           ) |>
           dplyr::select(dplyr::all_of(c(invariants, "grade_level", "subgroup", "n_students", "pct")))

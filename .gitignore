@@ -22,3 +22,5 @@ NAMESPACE
 
 # Test outputs
 tests/testthat/_snaps/
+/doc/
+/Meta/

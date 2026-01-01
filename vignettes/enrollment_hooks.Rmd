@@ -16,15 +16,41 @@ knitr::opts_chunk$set(
   fig.width = 8,
   fig.height = 5
 )
+
+# Check if we can fetch data from RIDE
+# If not, skip all code chunks that require data
+can_fetch_data <- tryCatch({
+  # Try a quick fetch to see if RIDE is accessible
+  test_data <- rischooldata::fetch_enr(2024, use_cache = TRUE)
+  nrow(test_data) > 0 && "n_students" %in% names(test_data)
+}, error = function(e) {
+ FALSE
+})
+
+# Set eval option based on data availability
+knitr::opts_chunk$set(eval = can_fetch_data)
 ```
 
-```{r load-packages}
+```{r load-packages, eval=TRUE}
 library(rischooldata)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 
 theme_set(theme_minimal(base_size = 14))
+```
+
+```{r data-unavailable, eval=!can_fetch_data, echo=FALSE, results='asis'}
+cat("
+**Note:** This vignette requires live data from the Rhode Island Department of Education (RIDE) Data Center.
+The data source is currently unavailable. Please try again later or run this vignette locally with an active internet connection.
+
+To fetch data manually:
+```r
+library(rischooldata)
+enr <- fetch_enr(2024)
+```
+")
 ```
 
 This vignette explores Rhode Island's public school enrollment data, surfacing key trends and demographic patterns across 16 years of data (2011-2026).
