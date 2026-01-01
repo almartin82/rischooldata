@@ -1,12 +1,10 @@
 Package: rischooldata
-Title: Fetch and Process Rhode Island School Data
+Title: Rhode Island School Data
 Version: 0.1.0
 Authors@R:
     person("Al", "Martin", , "almartin@example.com", role = c("aut", "cre"))
-Description: Downloads and processes school data from the Rhode Island Department
-    of Education (RIDE). Provides functions for fetching enrollment data from
-    RIDE's Data Center and transforming it into tidy format for analysis.
-    Supports October 1st Public School Student Headcounts from 2010-2011 to present.
+Description: A simple, consistent interface for accessing Rhode Island
+    school data in R.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
