@@ -2,11 +2,12 @@
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/almartin82/rischooldata/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/almartin82/rischooldata/actions/workflows/R-CMD-check.yaml)
+[![Python Tests](https://github.com/almartin82/rischooldata/actions/workflows/python-test.yaml/badge.svg)](https://github.com/almartin82/rischooldata/actions/workflows/python-test.yaml)
 <!-- badges: end -->
 
 **[Documentation](https://almartin82.github.io/rischooldata/)** | [GitHub](https://github.com/almartin82/rischooldata)
 
-An R package for accessing Rhode Island school enrollment data from the Rhode Island Department of Education (RIDE). **16 years of data** (2011-2026) for every school, district, and the state.
+Fetch and analyze Rhode Island school enrollment data from the Rhode Island Department of Education (RIDE) in R or Python. **16 years of data** (2011-2026) for every school, district, and the state.
 
 ## What can you find with rischooldata?
 
@@ -250,6 +251,8 @@ devtools::install_github("almartin82/rischooldata")
 
 ## Quick Start
 
+### R
+
 ```r
 library(rischooldata)
 library(dplyr)
@@ -272,6 +275,31 @@ enr |>
 
 # Get multiple years
 enr_multi <- fetch_enr_multi(2020:2026)
+```
+
+### Python
+
+```python
+import pyrischooldata as ri
+
+# Get 2026 enrollment data (2025-26 school year)
+enr = ri.fetch_enr(2026)
+
+# Statewide total
+state_total = enr[(enr['is_state'] == True) &
+                  (enr['subgroup'] == 'total_enrollment') &
+                  (enr['grade_level'] == 'TOTAL')]
+print(state_total['n_students'].values[0])
+#> 140123
+
+# Top 10 districts
+districts = enr[(enr['is_district'] == True) &
+                (enr['subgroup'] == 'total_enrollment') &
+                (enr['grade_level'] == 'TOTAL')]
+print(districts.nlargest(10, 'n_students')[['district_name', 'n_students']])
+
+# Get multiple years
+enr_multi = ri.fetch_enr_multi([2020, 2021, 2022, 2023, 2024, 2025, 2026])
 ```
 
 ## Data Availability
