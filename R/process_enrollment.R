@@ -24,16 +24,24 @@ process_enr <- function(raw_data, end_year) {
 
   # Standardize column names (lowercase, remove spaces)
   names(raw_data) <- tolower(gsub("\\s+", "_", names(raw_data)))
+
   names(raw_data) <- gsub("[^a-z0-9_]", "", names(raw_data))
 
   # Detect data format and process accordingly
   df <- process_ride_enrollment(raw_data, end_year)
 
-  # Create state aggregate
-  state_row <- create_state_aggregate(df, end_year)
+  # Only create state aggregate if no State row already exists
+  # (bundled data already includes state-level demographics)
+  has_state_row <- any(df$type == "State", na.rm = TRUE)
 
-  # Combine all levels
-  result <- dplyr::bind_rows(state_row, df)
+  if (!has_state_row) {
+    # Create state aggregate from district data
+    state_row <- create_state_aggregate(df, end_year)
+    # Combine all levels
+    result <- dplyr::bind_rows(state_row, df)
+  } else {
+    result <- df
+  }
 
   result
 }
@@ -181,14 +189,23 @@ process_ride_enrollment <- function(df, end_year) {
     result$female <- safe_numeric(df[[female_col]])
   }
 
+  # Gender - other/non-binary
+  other_col <- find_col(c("gender_other", "other", "nonbinary", "non_binary"))
+  if (!is.null(other_col)) {
+    result$gender_other <- safe_numeric(df[[other_col]])
+  }
+
   # Special populations
   special_map <- list(
-    econ_disadv = c("frl", "frpl", "free_reduced", "freereducedlunch", "free_reduced_lunch",
+    econ_disadv = c("econ_disadv", "frl", "frpl", "free_reduced", "freereducedlunch", "free_reduced_lunch",
                     "economicdisadvantaged", "economically_disadvantaged", "lowincome", "low_income"),
-    lep = c("el", "ell", "lep", "englishlearner", "english_learner", "limitedengproficient",
+    lep = c("lep", "el", "ell", "englishlearner", "english_learner", "limitedengproficient",
             "limited_english", "multilingual"),
-    special_ed = c("iep", "sped", "specialed", "special_ed", "special_education",
-                   "disability", "students_with_disabilities", "swd")
+    special_ed = c("special_ed", "iep", "sped", "specialed", "special_education",
+                   "disability", "students_with_disabilities", "swd"),
+    immigrant = c("immigrant", "immigrants"),
+    homeless = c("homeless"),
+    title1 = c("title1", "title_1", "titlei", "title_i")
   )
 
   for (name in names(special_map)) {
@@ -267,8 +284,9 @@ create_state_aggregate <- function(df, end_year) {
     "row_total",
     "white", "black", "hispanic", "asian",
     "pacific_islander", "native_american", "multiracial",
-    "male", "female",
+    "male", "female", "gender_other",
     "econ_disadv", "lep", "special_ed",
+    "immigrant", "homeless", "title1",
     "grade_pk", "grade_k",
     "grade_01", "grade_02", "grade_03", "grade_04",
     "grade_05", "grade_06", "grade_07", "grade_08",

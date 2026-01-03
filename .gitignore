@@ -7,8 +7,6 @@
 
 # Build artifacts
 docs/
-man/*.Rd
-NAMESPACE
 *.tar.gz
 *.Rcheck/
 ..Rcheck/

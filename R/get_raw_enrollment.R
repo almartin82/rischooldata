@@ -33,6 +33,10 @@
 #' Downloads enrollment data from RIDE's Data Center.
 #' Uses the October 1st Public School Student Headcounts reports.
 #'
+#' NOTE: As of late 2024, the RIDE Data Center requires JavaScript-based
+#' downloads that cannot be accessed programmatically. This function now
+#' primarily uses bundled data files, with network download as a fallback.
+#'
 #' @param end_year School year end (2023-24 = 2024)
 #' @return Data frame with raw enrollment data
 #' @keywords internal
@@ -47,7 +51,16 @@ get_raw_enr <- function(end_year) {
     ))
   }
 
+  # Try bundled data first (preferred - RIDE API is broken)
+  if (bundled_data_available(end_year)) {
+    message(paste("Loading bundled RIDE enrollment data for", end_year, "..."))
+    df <- load_bundled_enr(end_year)
+    return(df)
+  }
+
+  # Fall back to network download (likely to fail)
   message(paste("Downloading RIDE enrollment data for", end_year, "..."))
+  message("  Note: RIDE Data Center may require manual download. See ?import_local_enrollment")
 
   # Download from RIDE Data Center
   df <- download_ride_enrollment(end_year)
