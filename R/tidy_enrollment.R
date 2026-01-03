@@ -51,12 +51,13 @@ tidy_enr <- function(df) {
   demo_cols <- demo_cols[demo_cols %in% names(df)]
 
   # Gender columns
-  gender_cols <- c("male", "female")
+  gender_cols <- c("male", "female", "gender_other")
   gender_cols <- gender_cols[gender_cols %in% names(df)]
 
   # Special population subgroups
   special_cols <- c(
-    "special_ed", "lep", "econ_disadv"
+    "special_ed", "lep", "econ_disadv",
+    "immigrant", "homeless", "title1"
   )
   special_cols <- special_cols[special_cols %in% names(df)]
 

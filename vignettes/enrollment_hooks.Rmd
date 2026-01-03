@@ -53,7 +53,7 @@ enr <- fetch_enr(2024)
 ")
 ```
 
-This vignette explores Rhode Island's public school enrollment data, surfacing key trends and demographic patterns across 16 years of data (2011-2026).
+This vignette explores Rhode Island's public school enrollment data, surfacing key trends and demographic patterns across 15 years of data (2011-2025).
 
 ---
 
@@ -62,7 +62,7 @@ This vignette explores Rhode Island's public school enrollment data, surfacing k
 Rhode Island's public school enrollment peaked around 145,000 students in 2011 and has been declining ever since, following national demographic trends.
 
 ```{r statewide-trend}
-enr <- fetch_enr_multi(2011:2026)
+enr <- fetch_enr_multi(2011:2025)
 
 state_totals <- enr |>
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -77,11 +77,10 @@ state_totals
 ggplot(state_totals, aes(x = end_year, y = n_students)) +
   geom_line(linewidth = 1.2, color = "#003366") +
   geom_point(size = 3, color = "#003366") +
-
   scale_y_continuous(labels = scales::comma) +
   labs(
-    title = "Rhode Island Public School Enrollment (2011-2026)",
-    subtitle = "Steady decline has cost the state over 15,000 students",
+    title = "Rhode Island Public School Enrollment (2011-2025)",
+    subtitle = "Steady decline has cost the state over 8,000 students",
     x = "School Year (ending)",
     y = "Total Enrollment"
   )

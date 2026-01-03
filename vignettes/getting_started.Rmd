@@ -1,0 +1,191 @@
+---
+title: "Getting Started with rischooldata"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting Started with rischooldata}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE
+)
+```
+
+This vignette provides a quick introduction to the `rischooldata` package for accessing Rhode Island public school enrollment data.
+
+## Installation
+
+```{r install, eval=FALSE}
+# Install from GitHub
+remotes::install_github("your-repo/rischooldata")
+```
+
+## Basic Usage
+
+The main function is `fetch_enr()` which downloads and processes enrollment data for a specific school year:
+
+```{r basic}
+library(rischooldata)
+library(dplyr)
+
+# Fetch 2025 enrollment data (2024-25 school year)
+enr_2025 <- fetch_enr(2025)
+
+# See the structure
+glimpse(enr_2025)
+```
+
+## Understanding the Data
+
+### Year Convention
+
+The `end_year` parameter uses the END year of the school year:
+- `end_year = 2025` means the **2024-25** school year
+- `end_year = 2011` means the **2010-11** school year
+
+### Data Levels
+
+The package provides three levels of data, indicated by the `type` column:
+
+| Type | Description |
+|------|-------------|
+| State | Statewide totals |
+| District | LEA (Local Education Agency) level |
+| Campus | Individual school level |
+
+Boolean flags make filtering easy:
+
+```{r levels}
+# State total
+enr_2025 |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(n_students)
+
+# All districts
+enr_2025 |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  arrange(desc(n_students)) |>
+  head(5) |>
+  select(district_name, n_students)
+```
+
+### Subgroups
+
+The data includes 17 subgroups covering demographics and special populations:
+
+```{r subgroups}
+unique(enr_2025$subgroup)
+```
+
+| Category | Subgroups |
+|----------|-----------|
+| Total | `total_enrollment` |
+| Race/Ethnicity | `white`, `black`, `hispanic`, `asian`, `native_american`, `pacific_islander`, `multiracial` |
+| Gender | `male`, `female`, `gender_other` |
+| Special Populations | `econ_disadv` (FRL), `lep` (ELL), `special_ed` (IEP), `immigrant`, `homeless`, `title1` |
+
+### Grade Levels
+
+Individual grade levels are available:
+
+```{r grades}
+# Get kindergarten enrollment
+enr_2025 |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "K") |>
+  select(n_students)
+
+# Grade breakdown for state
+enr_2025 |>
+  filter(is_state, subgroup == "total_enrollment", !grade_level %in% c("TOTAL")) |>
+  select(grade_level, n_students) |>
+  arrange(grade_level)
+```
+
+## Multiple Years
+
+Use `fetch_enr_multi()` to get data for multiple years:
+
+```{r multi}
+# Get 5 years of data
+multi_year <- fetch_enr_multi(2021:2025)
+
+# Track state enrollment over time
+multi_year |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students) |>
+  arrange(end_year)
+```
+
+## Available Years
+
+Check what years are available:
+```{r years}
+get_available_years()
+```
+
+Data is available from **2011** (2010-11 school year) through **2026** (2025-26 school year).
+
+Note: State demographic data (race, gender, special populations) is available for 2012-2025. For 2011 and 2026, only district/school totals are available.
+
+## Wide Format
+
+For analysis requiring a wide format, use `tidy = FALSE`:
+
+```{r wide}
+wide_data <- fetch_enr(2025, tidy = FALSE)
+names(wide_data)
+```
+
+## Caching
+
+The package caches downloaded data locally to speed up repeated requests:
+
+```{r cache, eval=FALSE}
+# Check cache status
+cache_status()
+
+# Clear cache if needed
+clear_cache()
+
+# Force fresh download (ignore cache)
+fresh_data <- fetch_enr(2025, use_cache = FALSE)
+```
+
+## Example: Demographic Analysis
+
+```{r demo-analysis}
+# Get 2025 demographics at state level
+state_demos <- enr_2025 |>
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) |>
+  select(subgroup, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1)) |>
+  arrange(desc(n_students))
+
+state_demos
+```
+
+## Example: District Comparison
+
+```{r district-compare}
+# Compare top districts
+top_districts <- enr_2025 |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  arrange(desc(n_students)) |>
+  head(10) |>
+  select(district_name, n_students)
+
+top_districts
+```
+
+## Data Source
+
+All data comes from the Rhode Island Department of Education (RIDE) Data Center, specifically the October 1st Public School Student Headcounts reports.
+
+- Website: [datacenter.ride.ri.gov](https://datacenter.ride.ri.gov)
+- Data updated annually in October/November

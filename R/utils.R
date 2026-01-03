@@ -44,6 +44,6 @@ safe_numeric <- function(x) {
 #' get_available_years()
 get_available_years <- function() {
   # RIDE Data Center has data from 2010-11 to present
-  # As of 2025, data is available through 2024-25
-  2011:2025
+  # As of late 2025, data is available through 2025-26 (end_year 2026)
+  2011:2026
 }
