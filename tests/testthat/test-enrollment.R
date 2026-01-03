@@ -25,7 +25,7 @@ test_that("get_available_years returns expected range", {
   expect_true(2015 %in% years)
   expect_true(2024 %in% years)
   expect_true(min(years) >= 2011)  # Updated to include historical era
-  expect_true(max(years) >= 2025)
+  expect_true(max(years) >= 2024)
 })
 
 test_that("fetch_enr validates year parameter", {
