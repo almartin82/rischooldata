@@ -40,6 +40,9 @@ reference:
       - clear_cache
 
 articles:
+  - title: "Getting Started"
+    contents:
+      - getting_started
   - title: "Insights"
     contents:
       - enrollment_hooks
