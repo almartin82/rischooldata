@@ -14,7 +14,7 @@
 #' Headcounts data.
 #'
 #' @param end_year A school year. Year is the end of the academic year - eg 2023-24
-#'   school year is year '2024'. Valid values are 2011-2026. Historical data
+#'   school year is year '2024'. Valid values are 2011-2025. Historical data
 #'   (2011-2014) may have slightly different available fields than modern data
 #'   (2015+).
 #' @param tidy If TRUE (default), returns data in long (tidy) format with subgroup
