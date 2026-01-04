@@ -4,13 +4,14 @@
 \name{rischooldata-package}
 \alias{rischooldata}
 \alias{rischooldata-package}
-\title{rischooldata: Fetch and Process Rhode Island School Data}
+\title{rischooldata: Rhode Island School Data}
 \description{
-Downloads and processes school data from the Rhode Island Department of Education (RIDE). Provides functions for fetching enrollment data from RIDE's Data Center and transforming it into tidy format for analysis. Supports October 1st Public School Student Headcounts from 2010-2011 to present.
+A simple, consistent interface for accessing Rhode Island school data in Python and R.
 }
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://almartin82.github.io/rischooldata}
   \item \url{https://github.com/almartin82/rischooldata}
   \item Report bugs at \url{https://github.com/almartin82/rischooldata/issues}
 }
