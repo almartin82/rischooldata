@@ -16,4 +16,9 @@ Data frame with raw enrollment data
 Downloads enrollment data from RIDE's Data Center.
 Uses the October 1st Public School Student Headcounts reports.
 }
+\details{
+NOTE: As of late 2024, the RIDE Data Center requires JavaScript-based
+downloads that cannot be accessed programmatically. This function now
+primarily uses bundled data files, with network download as a fallback.
+}
 \keyword{internal}
