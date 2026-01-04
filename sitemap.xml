@@ -10,6 +10,7 @@
 <url><loc>https://almartin82.github.io/rischooldata/authors.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/index.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/build_ride_urls.html</loc></url>
+<url><loc>https://almartin82.github.io/rischooldata/reference/bundled_data_available.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/cache_exists.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/cache_status.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/clear_cache.html</loc></url>
@@ -29,7 +30,7 @@
 <url><loc>https://almartin82.github.io/rischooldata/reference/id_enr_aggs.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/import_local_enrollment.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/index.html</loc></url>
-<url><loc>https://almartin82.github.io/rischooldata/reference/pipe.html</loc></url>
+<url><loc>https://almartin82.github.io/rischooldata/reference/load_bundled_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/process_enr.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/process_ride_enrollment.html</loc></url>
 <url><loc>https://almartin82.github.io/rischooldata/reference/read_cache.html</loc></url>

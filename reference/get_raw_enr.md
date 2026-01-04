@@ -18,3 +18,9 @@ get_raw_enr(end_year)
 ## Value
 
 Data frame with raw enrollment data
+
+## Details
+
+NOTE: As of late 2024, the RIDE Data Center requires JavaScript-based
+downloads that cannot be accessed programmatically. This function now
+primarily uses bundled data files, with network download as a fallback.
