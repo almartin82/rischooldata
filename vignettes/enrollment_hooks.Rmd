@@ -1,8 +1,8 @@
 ---
-title: "10 Insights from Rhode Island School Enrollment Data"
+title: "15 Insights from Rhode Island School Enrollment Data"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{10 Insights from Rhode Island School Enrollment Data}
+  %\VignetteIndexEntry{15 Insights from Rhode Island School Enrollment Data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -16,41 +16,15 @@ knitr::opts_chunk$set(
   fig.width = 8,
   fig.height = 5
 )
-
-# Check if we can fetch data from RIDE
-# If not, skip all code chunks that require data
-can_fetch_data <- tryCatch({
-  # Try a quick fetch to see if RIDE is accessible
-  test_data <- rischooldata::fetch_enr(2024, use_cache = TRUE)
-  nrow(test_data) > 0 && "n_students" %in% names(test_data)
-}, error = function(e) {
- FALSE
-})
-
-# Set eval option based on data availability
-knitr::opts_chunk$set(eval = can_fetch_data)
 ```
 
-```{r load-packages, eval=TRUE}
+```{r load-packages}
 library(rischooldata)
 library(dplyr)
 library(tidyr)
 library(ggplot2)
 
 theme_set(theme_minimal(base_size = 14))
-```
-
-```{r data-unavailable, eval=!can_fetch_data, echo=FALSE, results='asis'}
-cat("
-**Note:** This vignette requires live data from the Rhode Island Department of Education (RIDE) Data Center.
-The data source is currently unavailable. Please try again later or run this vignette locally with an active internet connection.
-
-To fetch data manually:
-```r
-library(rischooldata)
-enr <- fetch_enr(2024)
-```
-")
 ```
 
 This vignette explores Rhode Island's public school enrollment data, surfacing key trends and demographic patterns across 15 years of data (2011-2025).
@@ -93,9 +67,9 @@ ggplot(state_totals, aes(x = end_year, y = n_students)) +
 Providence is Rhode Island's largest district by far, enrolling about 23,000 students--nearly one in six Rhode Island students.
 
 ```{r top-districts}
-enr_2026 <- fetch_enr(2026)
+enr_2025 <- fetch_enr(2025)
 
-top_districts <- enr_2026 |>
+top_districts <- enr_2025 |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   arrange(desc(n_students)) |>
   head(10) |>
@@ -113,7 +87,7 @@ top_districts |>
   scale_x_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   scale_fill_viridis_d(option = "mako", begin = 0.2, end = 0.8) +
   labs(
-    title = "Top 10 Rhode Island Districts by Enrollment (2026)",
+    title = "Top 10 Rhode Island Districts by Enrollment (2025)",
     subtitle = "Providence leads, followed by Warwick and Cranston",
     x = "Number of Students",
     y = NULL
@@ -127,7 +101,7 @@ top_districts |>
 Providence lost over 2,500 students during the pandemic while suburban districts held relatively steady.
 
 ```{r covid-impact}
-covid_enr <- fetch_enr_multi(2019:2026)
+covid_enr <- fetch_enr_multi(2019:2025)
 
 providence_trend <- covid_enr |>
   filter(district_name == "Providence", is_district,
@@ -145,7 +119,7 @@ providence_trend
 Rhode Island's Hispanic population has grown dramatically, from about 17% in 2011 to over 30% today.
 
 ```{r demographics}
-demographics <- enr_2026 |>
+demographics <- enr_2025 |>
   filter(is_state, grade_level == "TOTAL",
          subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) |>
   mutate(pct = round(pct * 100, 1)) |>
@@ -164,7 +138,7 @@ demographics |>
   scale_x_continuous(labels = scales::comma, expand = expansion(mult = c(0, 0.15))) +
   scale_fill_brewer(palette = "Set2") +
   labs(
-    title = "Rhode Island Student Demographics (2026)",
+    title = "Rhode Island Student Demographics (2025)",
     subtitle = "An increasingly diverse student population",
     x = "Number of Students",
     y = NULL
@@ -178,7 +152,7 @@ demographics |>
 Central Falls has the highest poverty rate in Rhode Island--over 90% of students are economically disadvantaged.
 
 ```{r central-falls}
-central_falls <- enr_2026 |>
+central_falls <- enr_2025 |>
   filter(grepl("Central Falls", district_name), is_district, grade_level == "TOTAL",
          subgroup %in% c("total_enrollment", "econ_disadv", "lep")) |>
   select(district_name, subgroup, n_students, pct) |>
@@ -194,7 +168,7 @@ central_falls
 Rhode Island has a significant English learner population, but it's highly concentrated in Providence, Central Falls, and Pawtucket.
 
 ```{r ell}
-ell_districts <- enr_2026 |>
+ell_districts <- enr_2025 |>
   filter(is_district, grade_level == "TOTAL", subgroup == "lep") |>
   filter(n_students >= 100) |>
   arrange(desc(pct)) |>
@@ -214,7 +188,7 @@ ell_districts |>
   scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
   scale_fill_gradient(low = "#66B2FF", high = "#003366") +
   labs(
-    title = "English Learners by District (2026)",
+    title = "English Learners by District (2025)",
     subtitle = "Urban districts serve the vast majority of EL students",
     x = "Percent of Enrollment",
     y = NULL
@@ -228,7 +202,7 @@ ell_districts |>
 Rhode Island's charter sector has grown steadily, now serving about 6% of state enrollment across 23 charter schools.
 
 ```{r charters}
-charters <- enr_2026 |>
+charters <- enr_2025 |>
   filter(is_charter, is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   summarize(
     n_charters = n(),
@@ -260,7 +234,7 @@ k_trend |>
   geom_point(size = 3, color = "#E69F00") +
   scale_y_continuous(labels = scales::comma) +
   labs(
-    title = "Kindergarten Enrollment (2011-2026)",
+    title = "Kindergarten Enrollment (2011-2025)",
     subtitle = "Recovering from COVID-era lows",
     x = "School Year",
     y = "Kindergarten Students"
@@ -291,7 +265,7 @@ race_trends
 Rhode Island's compact geography means district sizes vary wildly--from Providence's 23,000 to tiny districts with under 1,000 students.
 
 ```{r district-sizes}
-size_buckets <- enr_2026 |>
+size_buckets <- enr_2025 |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   mutate(size_bucket = case_when(
     n_students < 1000 ~ "Small (<1K)",
@@ -307,6 +281,189 @@ size_buckets
 
 ---
 
+## 11. Warwick vs Cranston: The suburban rivalry
+
+Rhode Island's two largest suburban districts are nearly identical in size, competing for the same middle-class families.
+
+```{r warwick-cranston}
+warwick_cranston <- fetch_enr_multi(2011:2025) |>
+  filter(district_name %in% c("Warwick", "Cranston"), is_district,
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, district_name, n_students)
+
+warwick_cranston |>
+  tidyr::pivot_wider(names_from = district_name, values_from = n_students)
+```
+
+```{r suburban-rivalry-chart}
+warwick_cranston |>
+  ggplot(aes(x = end_year, y = n_students, color = district_name)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 2.5) +
+  scale_y_continuous(labels = scales::comma) +
+  scale_color_manual(values = c("Cranston" = "#E69F00", "Warwick" = "#56B4E9")) +
+  labs(
+    title = "Warwick vs Cranston Enrollment (2011-2025)",
+    subtitle = "Two suburban giants tracking nearly identical trajectories",
+    x = "School Year",
+    y = "Total Enrollment",
+    color = "District"
+  )
+```
+
+---
+
+## 12. Special education enrollment climbing statewide
+
+Special education identification rates have increased across Rhode Island, now exceeding 17% in many districts.
+
+```{r sped-trends}
+sped_trends <- enr |>
+  filter(is_state, grade_level == "TOTAL", subgroup == "special_ed") |>
+  select(end_year, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+sped_trends
+```
+
+```{r sped-chart}
+sped_trends |>
+  ggplot(aes(x = end_year, y = pct)) +
+  geom_line(linewidth = 1.2, color = "#009E73") +
+  geom_point(size = 3, color = "#009E73") +
+  geom_hline(yintercept = 15, linetype = "dashed", color = "gray50") +
+  annotate("text", x = 2013, y = 15.5, label = "National average (~15%)", size = 3) +
+  labs(
+    title = "Special Education Enrollment Rate (2011-2025)",
+    subtitle = "Rhode Island consistently above national averages",
+    x = "School Year",
+    y = "Percent of Students"
+  )
+```
+
+---
+
+## 13. Pawtucket: The forgotten urban core
+
+Pawtucket often gets overlooked between Providence and Central Falls, but it's Rhode Island's third-largest city with over 8,000 students.
+
+```{r pawtucket}
+pawtucket <- enr_2025 |>
+  filter(grepl("Pawtucket", district_name), is_district, grade_level == "TOTAL",
+         subgroup %in% c("total_enrollment", "hispanic", "lep", "econ_disadv")) |>
+  select(subgroup, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+pawtucket
+```
+
+```{r pawtucket-chart}
+urban_comparison <- enr_2025 |>
+  filter(district_name %in% c("Providence", "Pawtucket", "Central Falls", "Woonsocket"),
+         is_district, grade_level == "TOTAL", subgroup == "econ_disadv") |>
+  select(district_name, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+urban_comparison |>
+  mutate(district_name = forcats::fct_reorder(district_name, pct)) |>
+  ggplot(aes(x = pct, y = district_name, fill = pct)) +
+  geom_col(show.legend = FALSE) +
+  geom_text(aes(label = paste0(pct, "%")), hjust = -0.1) +
+  scale_x_continuous(expand = expansion(mult = c(0, 0.15))) +
+  scale_fill_gradient(low = "#FFCC99", high = "#CC3300") +
+  labs(
+    title = "Economic Disadvantage in Urban Districts (2025)",
+    subtitle = "Pawtucket shares the challenges of its urban neighbors",
+    x = "Percent Economically Disadvantaged",
+    y = NULL
+  )
+```
+
+---
+
+## 14. Newport: Tourism economy, education gaps
+
+Newport's famous tourism economy masks significant educational disparities--the city struggles with both poverty and attracting families.
+
+```{r newport}
+newport_trend <- fetch_enr_multi(2015:2025) |>
+  filter(grepl("Newport", district_name), is_district,
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students) |>
+  mutate(change = n_students - first(n_students))
+
+newport_trend
+```
+
+```{r newport-chart}
+newport_trend |>
+  ggplot(aes(x = end_year, y = n_students)) +
+  geom_line(linewidth = 1.2, color = "#0072B2") +
+  geom_point(size = 3, color = "#0072B2") +
+  scale_y_continuous(labels = scales::comma) +
+  labs(
+    title = "Newport School District Enrollment (2015-2025)",
+    subtitle = "A tourist destination struggling to keep families",
+    x = "School Year",
+    y = "Total Enrollment"
+  )
+```
+
+---
+
+## 15. East Bay suburbs outpace Providence metro growth
+
+The East Bay communities (Barrington, Bristol, Warren) have held enrollment steady while Providence metro districts decline.
+
+```{r east-bay}
+regions <- enr_2025 |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  mutate(region = case_when(
+    district_name %in% c("Barrington", "Bristol Warren") ~ "East Bay",
+    district_name %in% c("Providence", "Pawtucket", "Central Falls") ~ "Providence Metro",
+    district_name %in% c("Warwick", "Cranston", "West Warwick") ~ "Central RI",
+    TRUE ~ "Other"
+  )) |>
+  filter(region != "Other") |>
+  group_by(region) |>
+  summarize(total_students = sum(n_students, na.rm = TRUE), .groups = "drop")
+
+regions
+```
+
+```{r regional-comparison-chart}
+# Compare regional trends over time
+regional_trends <- fetch_enr_multi(c(2015, 2020, 2025)) |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  mutate(region = case_when(
+    district_name %in% c("Barrington", "Bristol Warren") ~ "East Bay",
+    district_name %in% c("Providence", "Pawtucket", "Central Falls") ~ "Providence Metro",
+    district_name %in% c("Warwick", "Cranston", "West Warwick") ~ "Central RI",
+    TRUE ~ NA_character_
+  )) |>
+  filter(!is.na(region)) |>
+  group_by(end_year, region) |>
+  summarize(total_students = sum(n_students, na.rm = TRUE), .groups = "drop") |>
+  group_by(region) |>
+  mutate(pct_change = (total_students / first(total_students) - 1) * 100)
+
+regional_trends |>
+  ggplot(aes(x = end_year, y = pct_change, color = region)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 3) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "gray50") +
+  scale_color_brewer(palette = "Set1") +
+  labs(
+    title = "Regional Enrollment Change Since 2015",
+    subtitle = "East Bay holds steady while Providence Metro declines",
+    x = "School Year",
+    y = "Percent Change from 2015",
+    color = "Region"
+  )
+```
+
+---
+
 ## Summary
 
 Rhode Island's school enrollment data reveals:
@@ -316,6 +473,10 @@ Rhode Island's school enrollment data reveals:
 - **Demographic shift**: Hispanic enrollment has nearly doubled to 30%
 - **Urban challenges**: Central Falls, Pawtucket, and Providence face the highest poverty rates
 - **COVID recovery**: Kindergarten and overall enrollment are slowly stabilizing
+- **Suburban parity**: Warwick and Cranston track nearly identical enrollment trajectories
+- **Rising special ed**: Special education rates exceed 17% in many districts
+- **Newport's struggle**: Tourism economy fails to translate to school enrollment
+- **Regional divides**: East Bay holds steady while Providence metro declines
 
 These patterns shape school funding formulas and facility planning across the Ocean State.
 
