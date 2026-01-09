@@ -56,200 +56,16 @@
 <div class="section level2">
 <h2 id="what-can-you-find-with-rischooldata">What can you find with rischooldata?<a class="anchor" aria-label="anchor" href="#what-can-you-find-with-rischooldata"></a>
 </h2>
-<p>Rhode Island enrolls <strong>140,000 students</strong> across 36 districts in America’s smallest state. There are stories hiding in these numbers. Here are ten narratives waiting to be explored:</p>
+<p>Rhode Island enrolls <strong>134,000 students</strong> across districts in America’s smallest state. Explore enrollment trends across 16 years of data (2011-2026).</p>
+<p>See the <a href="https://almartin82.github.io/rischooldata/articles/enrollment_hooks.html">enrollment vignette</a> for detailed analysis of:</p>
+<ul>
+<li>Statewide enrollment trends</li>
+<li>District comparisons and rankings</li>
+<li>Demographic shifts over time</li>
+<li>Urban vs suburban enrollment patterns</li>
+<li>COVID-19 impact analysis</li>
+</ul>
 <hr>
-<div class="section level3">
-<h3 id="id_1-rhode-island-lost-15000-students-in-a-decade">1. Rhode Island Lost 15,000 Students in a Decade<a class="anchor" aria-label="anchor" href="#id_1-rhode-island-lost-15000-students-in-a-decade"></a>
-</h3>
-<p>The state’s enrollment has declined steadily since 2011.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://almartin82.github.io/rischooldata">rischooldata</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Statewide enrollment over time</span></span>
-<span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2011</span><span class="op">:</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students</span></span>
-<span><span class="co">#&gt; 1     2011     145234</span></span>
-<span><span class="co">#&gt; 2     2015     142876</span></span>
-<span><span class="co">#&gt; 3     2019     139432</span></span>
-<span><span class="co">#&gt; 4     2021     135876</span></span>
-<span><span class="co">#&gt; 5     2024     138234</span></span>
-<span><span class="co">#&gt; 6     2026     140123</span></span></code></pre></div>
-<p>From <strong>145,000 to 140,000</strong>—a 3.5% decline.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_2-providence-one-third-of-the-state">2. Providence: One-Third of the State<a class="anchor" aria-label="anchor" href="#id_2-providence-one-third-of-the-state"></a>
-</h3>
-<p><strong>Providence</strong> alone enrolls 23,000 students—nearly 17% of all Rhode Island students.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        district_name n_students</span></span>
-<span><span class="co">#&gt; 1         Providence      23456</span></span>
-<span><span class="co">#&gt; 2           Warwick       9876</span></span>
-<span><span class="co">#&gt; 3           Cranston       9234</span></span>
-<span><span class="co">#&gt; 4       Central Falls       2987</span></span>
-<span><span class="co">#&gt; 5         Woonsocket       5432</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_3-hispanic-students-now-30-of-enrollment">3. Hispanic Students Now 30% of Enrollment<a class="anchor" aria-label="anchor" href="#id_3-hispanic-students-now-30-of-enrollment"></a>
-</h3>
-<p>Rhode Island’s Hispanic population has grown dramatically.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2011</span>, <span class="fl">2016</span>, <span class="fl">2021</span>, <span class="fl">2026</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"hispanic"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students  pct</span></span>
-<span><span class="co">#&gt; 1     2011      25432 17.5</span></span>
-<span><span class="co">#&gt; 2     2016      31234 21.9</span></span>
-<span><span class="co">#&gt; 3     2021      38765 28.5</span></span>
-<span><span class="co">#&gt; 4     2026      42123 30.1</span></span></code></pre></div>
-<p>From 17.5% to <strong>30.1%</strong> in 15 years.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_4-charter-schools-serving-8000-students">4. Charter Schools Serving 8,000 Students<a class="anchor" aria-label="anchor" href="#id_4-charter-schools-serving-8000-students"></a>
-</h3>
-<p>Rhode Island’s charter sector has grown steadily.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_charter</span>, <span class="va">is_district</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarize</a></span><span class="op">(</span></span>
-<span>    n_charters <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/context.html" class="external-link">n</a></span><span class="op">(</span><span class="op">)</span>,</span>
-<span>    total_students <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span></span>
-<span>  <span class="op">)</span></span>
-<span><span class="co">#&gt;   n_charters total_students</span></span>
-<span><span class="co">#&gt; 1         23           8234</span></span></code></pre></div>
-<p><strong>23 charter schools</strong> now serve 6% of state enrollment.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_5-central-falls-smallest-city-biggest-challenges">5. Central Falls: Smallest City, Biggest Challenges<a class="anchor" aria-label="anchor" href="#id_5-central-falls-smallest-city-biggest-challenges"></a>
-</h3>
-<p><strong>Central Falls</strong> has the highest poverty rate in Rhode Island—and some of the smallest schools.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">grepl</a></span><span class="op">(</span><span class="st">"Central Falls"</span>, <span class="va">district_name</span><span class="op">)</span>, <span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">subgroup</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu">tidyr</span><span class="fu">::</span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="external-link">pivot_wider</a></span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">subgroup</span>, values_from <span class="op">=</span> <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct_econ <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">econ_disadv</span> <span class="op">/</span> <span class="va">total_enrollment</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   district_name total_enrollment econ_disadv pct_econ</span></span>
-<span><span class="co">#&gt; 1 Central Falls            2987        2756     92.3</span></span></code></pre></div>
-<p><strong>92% economically disadvantaged</strong>—the highest in the state.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_6-covid-hit-providence-hardest">6. COVID Hit Providence Hardest<a class="anchor" aria-label="anchor" href="#id_6-covid-hit-providence-hardest"></a>
-</h3>
-<p>Providence lost <strong>2,500 students</strong> during COVID while suburbs held steady.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">:</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">district_name</span> <span class="op">==</span> <span class="st">"Providence"</span>, <span class="va">is_district</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students</span></span>
-<span><span class="co">#&gt; 1     2019      24876</span></span>
-<span><span class="co">#&gt; 2     2020      24123</span></span>
-<span><span class="co">#&gt; 3     2021      22345</span></span>
-<span><span class="co">#&gt; 4     2022      22567</span></span>
-<span><span class="co">#&gt; 5     2023      22987</span></span>
-<span><span class="co">#&gt; 6     2024      23234</span></span>
-<span><span class="co">#&gt; 7     2025      23345</span></span>
-<span><span class="co">#&gt; 8     2026      23456</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_7-english-learners-12-statewide">7. English Learners: 12% Statewide<a class="anchor" aria-label="anchor" href="#id_7-english-learners-12-statewide"></a>
-</h3>
-<p>Rhode Island has a significant EL population concentrated in urban districts.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"lep"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">n_students</span> <span class="op">&gt;=</span> <span class="fl">200</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
-<span><span class="co">#&gt;     district_name n_students  pct</span></span>
-<span><span class="co">#&gt; 1   Central Falls        876 29.3</span></span>
-<span><span class="co">#&gt; 2      Providence       5234 22.3</span></span>
-<span><span class="co">#&gt; 3       Pawtucket       1234 15.2</span></span>
-<span><span class="co">#&gt; 4      Woonsocket        654 12.1</span></span>
-<span><span class="co">#&gt; 5         Cranston        567  6.1</span></span></code></pre></div>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_8-kindergarten-enrollment-stabilizing">8. Kindergarten Enrollment Stabilizing<a class="anchor" aria-label="anchor" href="#id_8-kindergarten-enrollment-stabilizing"></a>
-</h3>
-<p>After COVID drops, kindergarten is recovering.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2019</span><span class="op">:</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"K"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">end_year</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>change <span class="op">=</span> <span class="va">n_students</span> <span class="op">-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/nth.html" class="external-link">first</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   end_year n_students change</span></span>
-<span><span class="co">#&gt; 1     2019      10234      0</span></span>
-<span><span class="co">#&gt; 2     2020       9876   -358</span></span>
-<span><span class="co">#&gt; 3     2021       9123  -1111</span></span>
-<span><span class="co">#&gt; 4     2022       9345   -889</span></span>
-<span><span class="co">#&gt; 5     2023       9567   -667</span></span>
-<span><span class="co">#&gt; 6     2024       9876   -358</span></span>
-<span><span class="co">#&gt; 7     2025      10012   -222</span></span>
-<span><span class="co">#&gt; 8     2026      10123   -111</span></span></code></pre></div>
-<p>Almost back to pre-pandemic levels.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_9-white-students-now-under-50">9. White Students Now Under 50%<a class="anchor" aria-label="anchor" href="#id_9-white-students-now-under-50"></a>
-</h3>
-<p>Rhode Island crossed a demographic milestone.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span>,</span>
-<span>         <span class="va">subgroup</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"hispanic"</span>, <span class="st">"black"</span>, <span class="st">"asian"</span>, <span class="st">"multiracial"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subgroup</span>, <span class="va">n_students</span>, <span class="va">pct</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>pct <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="va">pct</span> <span class="op">*</span> <span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">pct</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt;      subgroup n_students  pct</span></span>
-<span><span class="co">#&gt; 1       white      65432 46.7</span></span>
-<span><span class="co">#&gt; 2    hispanic      42123 30.1</span></span>
-<span><span class="co">#&gt; 3       black      11234  8.0</span></span>
-<span><span class="co">#&gt; 4  multiracial       8765  6.3</span></span>
-<span><span class="co">#&gt; 5       asian       7654  5.5</span></span></code></pre></div>
-<p><strong>46.7% White</strong>—a majority-minority state for public schools.</p>
-<hr>
-</div>
-<div class="section level3">
-<h3 id="id_10-36-districts-in-americas-smallest-state">10. 36 Districts in America’s Smallest State<a class="anchor" aria-label="anchor" href="#id_10-36-districts-in-americas-smallest-state"></a>
-</h3>
-<p>Rhode Island’s compact geography means districts vary wildly in size.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>size_bucket <span class="op">=</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/case_when.html" class="external-link">case_when</a></span><span class="op">(</span></span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">1000</span> <span class="op">~</span> <span class="st">"Small (&lt;1K)"</span>,</span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">5000</span> <span class="op">~</span> <span class="st">"Medium (1K-5K)"</span>,</span>
-<span>    <span class="va">n_students</span> <span class="op">&lt;</span> <span class="fl">10000</span> <span class="op">~</span> <span class="st">"Large (5K-10K)"</span>,</span>
-<span>    <span class="cn">TRUE</span> <span class="op">~</span> <span class="st">"Very Large (10K+)"</span></span>
-<span>  <span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html" class="external-link">count</a></span><span class="op">(</span><span class="va">size_bucket</span><span class="op">)</span></span>
-<span><span class="co">#&gt;        size_bucket  n</span></span>
-<span><span class="co">#&gt; 1    Small (&lt;1K)   8</span></span>
-<span><span class="co">#&gt; 2 Medium (1K-5K)  18</span></span>
-<span><span class="co">#&gt; 3 Large (5K-10K)   8</span></span>
-<span><span class="co">#&gt; 4 Very Large (10K+) 2</span></span></code></pre></div>
-<p>Only <strong>2 districts</strong> (Providence, Warwick) exceed 10,000 students.</p>
-<hr>
-</div>
 </div>
 <div class="section level2">
 <h2 id="enrollment-visualizations">Enrollment Visualizations<a class="anchor" aria-label="anchor" href="#enrollment-visualizations"></a>
@@ -261,7 +77,7 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"almartin82/rischooldata"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -271,52 +87,51 @@
 <div class="section level3">
 <h3 id="r">R<a class="anchor" aria-label="anchor" href="#r"></a>
 </h3>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://almartin82.github.io/rischooldata">rischooldata</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Get 2026 enrollment data (2025-26 school year)</span></span>
-<span><span class="va">enr</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span><span class="op">)</span></span>
+<span><span class="co"># Fetch 2025 enrollment data (2024-25 school year)</span></span>
+<span><span class="va">enr_2025</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># Statewide total</span></span>
-<span><span class="va">enr</span> <span class="op">|&gt;</span></span>
+<span><span class="co"># See the structure</span></span>
+<span><span class="fu"><a href="https://pillar.r-lib.org/reference/glimpse.html" class="external-link">glimpse</a></span><span class="op">(</span><span class="va">enr_2025</span><span class="op">)</span></span></code></pre></div>
+<p><strong>State total:</strong></p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2025</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_state</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/pull.html" class="external-link">pull</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 140,123</span></span>
-<span></span>
-<span><span class="co"># Top 10 districts</span></span>
-<span><span class="va">enr</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
+<p><strong>Top 10 districts:</strong></p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">enr_2025</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">is_district</span>, <span class="va">subgroup</span> <span class="op">==</span> <span class="st">"total_enrollment"</span>, <span class="va">grade_level</span> <span class="op">==</span> <span class="st">"TOTAL"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">n_students</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Get multiple years</span></span>
-<span><span class="va">enr_multi</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr_multi.html">fetch_enr_multi</a></span><span class="op">(</span><span class="fl">2020</span><span class="op">:</span><span class="fl">2026</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">district_name</span>, <span class="va">n_students</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="python">Python<a class="anchor" aria-label="anchor" href="#python"></a>
 </h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a><span class="im">import</span> pyrischooldata <span class="im">as</span> ri</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a><span class="co"># Get 2026 enrollment data (2025-26 school year)</span></span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>enr <span class="op">=</span> ri.fetch_enr(<span class="dv">2026</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co"># Statewide total</span></span>
-<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a>state_total <span class="op">=</span> enr[(enr[<span class="st">'is_state'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span></span>
-<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>                  (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span></span>
-<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a>                  (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)]</span>
-<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="bu">print</span>(state_total[<span class="st">'n_students'</span>].values[<span class="dv">0</span>])</span>
-<span id="cb13-11"><a href="#cb13-11" tabindex="-1"></a><span class="co">#&gt; 140123</span></span>
-<span id="cb13-12"><a href="#cb13-12" tabindex="-1"></a></span>
-<span id="cb13-13"><a href="#cb13-13" tabindex="-1"></a><span class="co"># Top 10 districts</span></span>
-<span id="cb13-14"><a href="#cb13-14" tabindex="-1"></a>districts <span class="op">=</span> enr[(enr[<span class="st">'is_district'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span></span>
-<span id="cb13-15"><a href="#cb13-15" tabindex="-1"></a>                (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span></span>
-<span id="cb13-16"><a href="#cb13-16" tabindex="-1"></a>                (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)]</span>
-<span id="cb13-17"><a href="#cb13-17" tabindex="-1"></a><span class="bu">print</span>(districts.nlargest(<span class="dv">10</span>, <span class="st">'n_students'</span>)[[<span class="st">'district_name'</span>, <span class="st">'n_students'</span>]])</span>
-<span id="cb13-18"><a href="#cb13-18" tabindex="-1"></a></span>
-<span id="cb13-19"><a href="#cb13-19" tabindex="-1"></a><span class="co"># Get multiple years</span></span>
-<span id="cb13-20"><a href="#cb13-20" tabindex="-1"></a>enr_multi <span class="op">=</span> ri.fetch_enr_multi([<span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>, <span class="dv">2025</span>, <span class="dv">2026</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="im">import</span> pyrischooldata <span class="im">as</span> ri</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Get 2025 enrollment data (2024-25 school year)</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>enr <span class="op">=</span> ri.fetch_enr(<span class="dv">2025</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a><span class="co"># Statewide total</span></span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>state_total <span class="op">=</span> enr[(enr[<span class="st">'is_state'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span></span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>                  (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span></span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>                  (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)]</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a><span class="bu">print</span>(state_total[<span class="st">'n_students'</span>].values[<span class="dv">0</span>])</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a><span class="co">#&gt; 135978</span></span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co"># Top 10 districts</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>districts <span class="op">=</span> enr[(enr[<span class="st">'is_district'</span>] <span class="op">==</span> <span class="va">True</span>) <span class="op">&amp;</span></span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>                (enr[<span class="st">'subgroup'</span>] <span class="op">==</span> <span class="st">'total_enrollment'</span>) <span class="op">&amp;</span></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>                (enr[<span class="st">'grade_level'</span>] <span class="op">==</span> <span class="st">'TOTAL'</span>)]</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a><span class="bu">print</span>(districts.nlargest(<span class="dv">10</span>, <span class="st">'n_students'</span>)[[<span class="st">'district_name'</span>, <span class="st">'n_students'</span>]])</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a><span class="co"># Get multiple years</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>enr_multi <span class="op">=</span> ri.fetch_enr_multi([<span class="dv">2020</span>, <span class="dv">2021</span>, <span class="dv">2022</span>, <span class="dv">2023</span>, <span class="dv">2024</span>, <span class="dv">2025</span>])</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -341,7 +156,7 @@
 </tr>
 </tbody>
 </table>
-<p><strong>16 years</strong> across ~36 districts and ~300 schools.</p>
+<p><strong>16 years</strong> across 64 districts and 307 schools.</p>
 <div class="section level3">
 <h3 id="whats-included">What’s Included<a class="anchor" aria-label="anchor" href="#whats-included"></a>
 </h3>
@@ -428,7 +243,7 @@
 <div class="section level2">
 <h2 id="caching">Caching<a class="anchor" aria-label="anchor" href="#caching"></a>
 </h2>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View cached files</span></span>
 <span><span class="fu"><a href="reference/cache_status.html">cache_status</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -436,7 +251,7 @@
 <span><span class="fu"><a href="reference/clear_cache.html">clear_cache</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Force fresh download</span></span>
-<span><span class="va">enr</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2026</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">enr</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fetch_enr.html">fetch_enr</a></span><span class="op">(</span><span class="fl">2025</span>, use_cache <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="part-of-the-state-schooldata-project">Part of the State Schooldata Project<a class="anchor" aria-label="anchor" href="#part-of-the-state-schooldata-project"></a>

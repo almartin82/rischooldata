@@ -22,7 +22,7 @@ in 2011 and has been declining ever since, following national
 demographic trends.
 
 ``` r
-enr <- fetch_enr_multi(2011:2025)
+enr <- fetch_enr_multi(2011:2025, use_cache = TRUE)
 
 state_totals <- enr |>
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -72,7 +72,7 @@ Providence is Rhode Island’s largest district by far, enrolling about
 23,000 students–nearly one in six Rhode Island students.
 
 ``` r
-enr_2025 <- fetch_enr(2025)
+enr_2025 <- fetch_enr(2025, use_cache = TRUE)
 
 top_districts <- enr_2025 |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
@@ -120,7 +120,7 @@ Providence lost over 2,500 students during the pandemic while suburban
 districts held relatively steady.
 
 ``` r
-covid_enr <- fetch_enr_multi(2019:2025)
+covid_enr <- fetch_enr_multi(2019:2025, use_cache = TRUE)
 
 providence_trend <- covid_enr |>
   filter(district_name == "Providence", is_district,
@@ -378,7 +378,7 @@ Rhode Island’s two largest suburban districts are nearly identical in
 size, competing for the same middle-class families.
 
 ``` r
-warwick_cranston <- fetch_enr_multi(2011:2025) |>
+warwick_cranston <- fetch_enr_multi(2011:2025, use_cache = TRUE) |>
   filter(district_name %in% c("Warwick", "Cranston"), is_district,
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
   select(end_year, district_name, n_students)
@@ -524,7 +524,7 @@ disparities–the city struggles with both poverty and attracting
 families.
 
 ``` r
-newport_trend <- fetch_enr_multi(2015:2025) |>
+newport_trend <- fetch_enr_multi(2015:2025, use_cache = TRUE) |>
   filter(grepl("Newport", district_name), is_district,
          subgroup == "total_enrollment", grade_level == "TOTAL") |>
   select(end_year, n_students) |>
@@ -592,7 +592,7 @@ regions
 
 ``` r
 # Compare regional trends over time
-regional_trends <- fetch_enr_multi(c(2015, 2020, 2025)) |>
+regional_trends <- fetch_enr_multi(c(2015, 2020, 2025), use_cache = TRUE) |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   mutate(region = case_when(
     district_name %in% c("Barrington", "Bristol Warren") ~ "East Bay",
