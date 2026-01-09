@@ -433,7 +433,7 @@ regions
 
 ```{r regional-comparison-chart}
 # Compare regional trends over time
-regional_trends <- fetch_enr_multi(c(2015, 2020, 2025, use_cache = TRUE)) |>
+regional_trends <- fetch_enr_multi(c(2015, 2020, 2025), use_cache = TRUE) |>
   filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   mutate(region = case_when(
     district_name %in% c("Barrington", "Bristol Warren") ~ "East Bay",
