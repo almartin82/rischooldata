@@ -1,11 +1,10 @@
-# Claude Code Instructions
+## CRITICAL DATA SOURCE RULES
 
-### GIT COMMIT POLICY
-- Commits are allowed
-- NO Claude Code attribution, NO Co-Authored-By trailers, NO emojis
-- Write normal commit messages as if a human wrote them
+**NEVER use Urban Institute API, NCES CCD, or ANY federal data source** - the entire point of these packages is to provide STATE-LEVEL data directly from state DOEs. Federal sources aggregate/transform data differently and lose state-specific details. If a state DOE source is broken, FIX IT or find an alternative STATE source - do not fall back to federal data.
 
 ---
+
+# State Schooldata Packages (49 states, all except NJ)
 
 ## Local Testing Before PRs (REQUIRED)
 
@@ -16,7 +15,7 @@
 | Check | Local Command | What It Tests |
 |-------|---------------|---------------|
 | R-CMD-check | `devtools::check()` | Package builds, tests pass, no errors/warnings |
-| Python tests | `pytest tests/test_pyrischooldata.py -v` | Python wrapper works correctly |
+| Python tests | `pytest tests/test_py{st}schooldata.py -v` | Python wrapper works correctly |
 | pkgdown | `pkgdown::build_site()` | Documentation and vignettes render |
 
 ### Quick Commands
@@ -26,7 +25,7 @@
 devtools::check()
 
 # Python tests (required)
-system("pip install -e ./pyrischooldata && pytest tests/test_pyrischooldata.py -v")
+system("pip install -e ./py{st}schooldata && pytest tests/test_py{st}schooldata.py -v")
 
 # pkgdown build (required)
 pkgdown::build_site()
@@ -36,9 +35,10 @@ pkgdown::build_site()
 
 Before opening a PR, verify:
 - [ ] `devtools::check()` — 0 errors, 0 warnings
-- [ ] `pytest tests/test_pyrischooldata.py` — all tests pass
+- [ ] `pytest tests/test_py{st}schooldata.py` — all tests pass
 - [ ] `pkgdown::build_site()` — builds without errors
 - [ ] Vignettes render (no `eval=FALSE` hacks)
+
 ---
 
 ## Git Workflow (REQUIRED)
@@ -85,7 +85,6 @@ PRs auto-merge when ALL CI checks pass:
 
 If CI fails, fix the issue and push - auto-merge triggers when checks pass.
 
-
 ---
 
 ## README Images from Vignettes (REQUIRED)
@@ -110,7 +109,7 @@ README images MUST come from pkgdown-generated vignette output so they auto-upda
 
 The Idaho fix revealed critical bugs when README code didn't match vignettes:
 - Wrong district names (lowercase vs ALL CAPS)
-- Text claims that contradicted actual data  
+- Text claims that contradicted actual data
 - Missing data output in examples
 
 ### README Story Structure (REQUIRED)
@@ -133,99 +132,69 @@ The `state-deploy` skill verifies this before deployment:
 
 ### What This Prevents
 
-- ❌ Wrong district/entity names (case sensitivity, typos)
-- ❌ Text claims that contradict data
-- ❌ Broken code that fails silently
-- ❌ Missing data output
-- ✅ Verified, accurate, reproducible examples
-
-### Example
-
-```markdown
-### 1. State enrollment grew 28% since 2002
-
-State added 68,000 students from 2002 to 2026, bucking national trends.
-
-```r
-library(arschooldata)
-library(dplyr)
-
-enr <- fetch_enr_multi(2002:2026)
-
-enr %>%
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
-  select(end_year, n_students) %>%
-  filter(end_year %in% c(2002, 2026)) %>%
-  mutate(change = n_students - lag(n_students),
-         pct_change = round((n_students / lag(n_students) - 1) * 100, 1))
-# Prints: 2002=XXX, 2026=YYY, change=ZZZ, pct=PP.P%
-```
-
-![Chart](https://almartin82.github.io/arschooldata/articles/...)
-```
-
+- Wrong district/entity names (case sensitivity, typos)
+- Text claims that contradict data
+- Broken code that fails silently
+- Missing data output
+- Verified, accurate, reproducible examples
 
 ---
 
-## README and Vignette Code Matching (REQUIRED)
+# rischooldata
 
-**CRITICAL RULE (as of 2026-01-08):** ALL code blocks in the README MUST match code in a vignette EXACTLY (1:1 correspondence).
+## Data Availability
 
-### Why This Matters
+**Available Years:** 2011-2025 (15 years)
 
-The Idaho fix revealed critical bugs when README code didn't match vignettes:
-- Wrong district names (lowercase vs ALL CAPS)
-- Text claims that contradicted actual data  
-- Missing data output in examples
+| Era | Years | Format | Notes |
+|-----|-------|--------|-------|
+| Historical | 2011-2014 | Excel (.xlsx) | October 1st Public School Student Headcounts |
+| Current | 2015-2025 | Excel (.xlsx) | RIDE Data Center format |
 
-### README Story Structure (REQUIRED)
+**Data Source:** Rhode Island Department of Education (RIDE) Data Center
+- URL: https://datacenter.ride.ri.gov/
+- Report: October 1st Public School Student Headcounts
+- Note: As of late 2024, RIDE Data Center requires JavaScript-based downloads. Package uses bundled data files with network download as fallback.
 
-Every story/section in the README MUST follow this structure:
+## Data Format
 
-1. **Claim**: A factual statement about the data
-2. **Explication**: Brief explanation of why this matters
-3. **Code**: R code that fetches and analyzes the data (MUST exist in a vignette)
-4. **Code Output**: Data table/print statement showing actual values (REQUIRED)
-5. **Visualization**: Chart from vignette (auto-generated from pkgdown)
+| Column | Description |
+|--------|-------------|
+| `end_year` | School year end (e.g., 2025 for 2024-25) |
+| `district_id` | District identifier (2-3 digits) |
+| `campus_id` | School identifier (5 digits: District ID + school number) |
+| `district_name`, `campus_name` | Names |
+| `type` | "State", "District", or "Campus" |
+| `grade_level` | "TOTAL", "PK", "K", "01"..."12" |
+| `subgroup` | Demographic group |
+| `n_students` | Enrollment count |
+| `pct` | Percentage of total |
+| `is_charter` | Charter school flag |
 
-### Enforcement
+## What's Included
 
-The `state-deploy` skill verifies this before deployment:
-- Extracts all README code blocks
-- Searches vignettes for EXACT matches
-- Fails deployment if code not found in vignettes
-- Randomly audits packages for claim accuracy
+- **Levels:** State, district (64), and school (307)
+- **Demographics:** White, Black, Hispanic, Asian, Native American, Pacific Islander, Multiracial
+- **Gender:** Male, Female
+- **Special populations:** Economically disadvantaged, English learners, Special education
+- **Grade levels:** Pre-K through Grade 12
 
-### What This Prevents
+## Rhode Island ID System
 
-- ❌ Wrong district/entity names (case sensitivity, typos)
-- ❌ Text claims that contradict data
-- ❌ Broken code that fails silently
-- ❌ Missing data output
-- ✅ Verified, accurate, reproducible examples
+- **District ID:** 2-3 digits (e.g., 01, 28)
+- **School ID:** 5 digits (District ID + school number)
+- **Charter schools:** Reported as separate districts
 
-### Example
+## Known Data Issues
 
-```markdown
-### 1. State enrollment grew 28% since 2002
+1. **RIDE API limitations:** As of late 2024, the RIDE Data Center requires JavaScript-based downloads that cannot be accessed programmatically. The package uses bundled data files as the primary source.
+2. **Historical format differences:** Era 1 (2011-2014) data may have different column formats than modern data.
+3. **Manual download fallback:** If bundled data is unavailable, users may need to manually download from RIDE Data Center and use `import_local_enrollment()`.
 
-State added 68,000 students from 2002 to 2026, bucking national trends.
+## Fidelity Requirement
 
-```r
-library(idschooldata)
-library(dplyr)
-
-enr <- fetch_enr_multi(2002:2026)
-
-enr %>%
-  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") %>%
-  select(end_year, n_students) %>%
-  filter(end_year %in% c(2002, 2026)) %>%
-  mutate(change = n_students - lag(n_students),
-         pct_change = round((n_students / lag(n_students) - 1) * 100, 1))
-# Prints: 2002=XXX, 2026=YYY, change=ZZZ, pct=PP.P%
-```
-
-![Chart](https://almartin82.github.io/idschooldata/articles/...)
-```
-
+**tidy=TRUE MUST maintain fidelity to raw, unprocessed data:**
+- Enrollment counts in tidy format must exactly match the wide format
+- No rounding or transformation of counts during tidying
+- Percentages are calculated fresh but counts are preserved
+- State aggregates are sums of school-level data
