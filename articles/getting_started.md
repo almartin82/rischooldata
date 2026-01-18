@@ -271,3 +271,41 @@ reports.
 
 - Website: [datacenter.ride.ri.gov](https://datacenter.ride.ri.gov)
 - Data updated annually in October/November
+
+``` r
+sessionInfo()
+#> R version 4.5.2 (2025-10-31)
+#> Platform: x86_64-pc-linux-gnu
+#> Running under: Ubuntu 24.04.3 LTS
+#> 
+#> Matrix products: default
+#> BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
+#> LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.26.so;  LAPACK version 3.12.0
+#> 
+#> locale:
+#>  [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8       
+#>  [4] LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8    LC_MESSAGES=C.UTF-8   
+#>  [7] LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C          
+#> [10] LC_TELEPHONE=C         LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+#> 
+#> time zone: UTC
+#> tzcode source: system (glibc)
+#> 
+#> attached base packages:
+#> [1] stats     graphics  grDevices utils     datasets  methods   base     
+#> 
+#> other attached packages:
+#> [1] dplyr_1.1.4        rischooldata_0.1.0
+#> 
+#> loaded via a namespace (and not attached):
+#>  [1] vctrs_0.7.0       cli_3.6.5         knitr_1.51        rlang_1.1.7      
+#>  [5] xfun_0.55         purrr_1.2.1       generics_0.1.4    textshaping_1.0.4
+#>  [9] jsonlite_2.0.0    glue_1.8.0        htmltools_0.5.9   ragg_1.5.0       
+#> [13] sass_0.4.10       readxl_1.4.5      rappdirs_0.3.4    rmarkdown_2.30   
+#> [17] cellranger_1.1.0  tibble_3.3.1      evaluate_1.0.5    jquerylib_0.1.4  
+#> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.5.2   
+#> [25] codetools_0.2-20  fs_1.6.6          pkgconfig_2.0.3   systemfonts_1.3.1
+#> [29] digest_0.6.39     R6_2.6.1          tidyselect_1.2.1  pillar_1.11.1    
+#> [33] magrittr_2.0.4    bslib_0.9.0       withr_3.0.2       tools_4.5.2      
+#> [37] pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
+```
