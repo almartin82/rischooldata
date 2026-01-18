@@ -484,3 +484,7 @@ These patterns shape school funding formulas and facility planning across the Oc
 ---
 
 *Data sourced from the Rhode Island Department of Education [Data Center](https://www.ride.ri.gov/InformationAccountability/RIEducationData.aspx).*
+
+```{r session-info}
+sessionInfo()
+```
