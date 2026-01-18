@@ -190,3 +190,7 @@ All data comes from the Rhode Island Department of Education (RIDE) Data Center,
 
 - Website: [datacenter.ride.ri.gov](https://datacenter.ride.ri.gov)
 - Data updated annually in October/November
+
+```{r session-info}
+sessionInfo()
+```

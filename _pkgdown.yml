@@ -46,6 +46,13 @@ articles:
   - title: "Insights"
     contents:
       - enrollment_hooks
+  - title: "Internal Documentation"
+    navbar: ~
+    contents:
+      - starts_with("CLAUDE")
+      - starts_with("TODO")
+      - starts_with("PRD")
+      - starts_with("EXPANSION")
 
 home:
   links:
