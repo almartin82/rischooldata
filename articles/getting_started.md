@@ -22,7 +22,7 @@ library(rischooldata)
 library(dplyr)
 
 # Fetch 2025 enrollment data (2024-25 school year)
-enr_2025 <- fetch_enr(2025)
+enr_2025 <- fetch_enr(2025, use_cache = TRUE)
 
 # See the structure
 glimpse(enr_2025)
@@ -152,7 +152,7 @@ to get data for multiple years:
 
 ``` r
 # Get 5 years of data
-multi_year <- fetch_enr_multi(2021:2025)
+multi_year <- fetch_enr_multi(2021:2025, use_cache = TRUE)
 
 # Track state enrollment over time
 multi_year |>
@@ -189,7 +189,7 @@ are available.
 For analysis requiring a wide format, use `tidy = FALSE`:
 
 ``` r
-wide_data <- fetch_enr(2025, tidy = FALSE)
+wide_data <- fetch_enr(2025, tidy = FALSE, use_cache = TRUE)
 names(wide_data)
 #>  [1] "end_year"         "type"             "district_id"      "campus_id"       
 #>  [5] "district_name"    "campus_name"      "charter_flag"     "row_total"       
