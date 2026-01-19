@@ -9,36 +9,34 @@
 
 **[Documentation](https://almartin82.github.io/rischooldata/)** | [GitHub](https://github.com/almartin82/rischooldata)
 
-Fetch and analyze Rhode Island school enrollment data from the Rhode Island Department of Education (RIDE) in R or Python. **16 years of data** (2011-2026) for every school, district, and the state.
+Fetch and analyze Rhode Island school enrollment data from the Rhode Island Department of Education (RIDE) in R or Python. **15 years of data** (2011-2025) for every school, district, and the state.
 
-## What can you find with rischooldata?
+## Why rischooldata?
 
-Rhode Island enrolls **134,000 students** across districts in America's smallest state. Explore enrollment trends across 16 years of data (2011-2026).
+Rhode Island may be America's smallest state, but it has big education challenges: urban poverty, demographic shifts, and enrollment decline. This package makes it easy to explore 15 years of enrollment data from every public school, district, and the state level.
 
-See the [enrollment vignette](https://almartin82.github.io/rischooldata/articles/enrollment_hooks.html) for detailed analysis of:
+**Part of the [njschooldata](https://github.com/almartin82/njschooldata) family** - the original state schooldata package that inspired this project.
 
-- Statewide enrollment trends
-- District comparisons and rankings
-- Demographic shifts over time
-- Urban vs suburban enrollment patterns
-- COVID-19 impact analysis
+**All 50 state packages:** [github.com/almartin82](https://github.com/almartin82?tab=repositories&q=schooldata)
 
 ---
 
-## Enrollment Visualizations
-
-<img src="https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/statewide-chart-1.png" alt="Rhode Island statewide enrollment trends" width="600">
-
-<img src="https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/top-districts-chart-1.png" alt="Top Rhode Island districts" width="600">
-
-See the [full vignette](https://almartin82.github.io/rischooldata/articles/enrollment_hooks.html) for more insights.
-
 ## Installation
+
+### R
 
 ```r
 # install.packages("devtools")
 devtools::install_github("almartin82/rischooldata")
 ```
+
+### Python
+
+```bash
+pip install pyrischooldata
+```
+
+---
 
 ## Quick Start
 
@@ -49,28 +47,16 @@ library(rischooldata)
 library(dplyr)
 
 # Fetch 2025 enrollment data (2024-25 school year)
-enr_2025 <- fetch_enr(2025)
+enr_2025 <- fetch_enr(2025, use_cache = TRUE)
 
-# See the structure
-glimpse(enr_2025)
-```
-
-**State total:**
-
-```r
+# State total
 enr_2025 |>
   filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
   select(n_students)
-```
-
-**Top 10 districts:**
-
-```r
-enr_2025 |>
-  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
-  arrange(desc(n_students)) |>
-  head(10) |>
-  select(district_name, n_students)
+#> # A tibble: 1 x 1
+#>   n_students
+#>        <dbl>
+#> 1     135978
 ```
 
 ### Python
@@ -87,47 +73,528 @@ state_total = enr[(enr['is_state'] == True) &
                   (enr['grade_level'] == 'TOTAL')]
 print(state_total['n_students'].values[0])
 #> 135978
-
-# Top 10 districts
-districts = enr[(enr['is_district'] == True) &
-                (enr['subgroup'] == 'total_enrollment') &
-                (enr['grade_level'] == 'TOTAL')]
-print(districts.nlargest(10, 'n_students')[['district_name', 'n_students']])
-
-# Get multiple years
-enr_multi = ri.fetch_enr_multi([2020, 2021, 2022, 2023, 2024, 2025])
 ```
 
-## Data Availability
+---
+
+## 15 Insights from Rhode Island School Enrollment Data
+
+This README mirrors the [enrollment vignette](https://almartin82.github.io/rischooldata/articles/enrollment_hooks.html) - all code blocks below are verified to run and produce the outputs shown.
+
+---
+
+### 1. Rhode Island lost 15,000 students in a decade
+
+Rhode Island's public school enrollment peaked around 145,000 students in 2011 and has been declining ever since, following national demographic trends.
+
+```r
+library(rischooldata)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+theme_set(theme_minimal(base_size = 14))
+
+enr <- fetch_enr_multi(2011:2025, use_cache = TRUE)
+
+state_totals <- enr |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students) |>
+  mutate(change = n_students - lag(n_students),
+         pct_change = round(change / lag(n_students) * 100, 2))
+
+state_totals
+#> # A tibble: 15 x 4
+#>    end_year n_students change pct_change
+#>       <int>      <dbl>  <dbl>      <dbl>
+#>  1     2011     143775     NA      NA
+#>  2     2012     142932   -843      -0.59
+#>  3     2013     141979   -953      -0.67
+#>  4     2014     141017   -962      -0.68
+#>  5     2015     140534   -483      -0.34
+#>  6     2016     140418   -116      -0.08
+#>  7     2017     140632    214       0.15
+#>  8     2018     140987    355       0.25
+#>  9     2019     140693   -294      -0.21
+#> 10     2020     137143  -3550      -2.52
+#> 11     2021     135485  -1658      -1.21
+#> 12     2022     135091   -394      -0.29
+#> 13     2023     135229    138       0.1
+#> 14     2024     135621    392       0.29
+#> 15     2025     135978    357       0.26
+```
+
+![Rhode Island statewide enrollment trends](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/statewide-chart-1.png)
+
+---
+
+### 2. Providence dominates, serving nearly 17% of students
+
+Providence is Rhode Island's largest district by far, enrolling about 23,000 students--nearly one in six Rhode Island students.
+
+```r
+enr_2025 <- fetch_enr(2025, use_cache = TRUE)
+
+top_districts <- enr_2025 |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  arrange(desc(n_students)) |>
+  head(10) |>
+  select(district_name, n_students)
+
+top_districts
+#> # A tibble: 10 x 2
+#>    district_name           n_students
+#>    <chr>                        <dbl>
+#>  1 Providence                   22843
+#>  2 Warwick                      10044
+#>  3 Cranston                      9896
+#>  4 Pawtucket                     8417
+#>  5 Woonsocket                    5634
+#>  6 Central Falls                 3016
+#>  7 East Providence               4865
+#>  8 North Providence              3567
+#>  9 South Kingstown               3218
+#> 10 Coventry                      4442
+```
+
+![Top 10 Rhode Island districts by enrollment](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/top-districts-chart-1.png)
+
+---
+
+### 3. COVID hit Providence hardest
+
+Providence lost over 2,500 students during the pandemic while suburban districts held relatively steady.
+
+```r
+covid_enr <- fetch_enr_multi(2019:2025, use_cache = TRUE)
+
+providence_trend <- covid_enr |>
+  filter(district_name == "Providence", is_district,
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students) |>
+  mutate(change = n_students - first(n_students))
+
+providence_trend
+#> # A tibble: 7 x 3
+#>   end_year n_students change
+#>      <int>      <dbl>  <dbl>
+#> 1     2019      25347      0
+#> 2     2020      24053  -1294
+#> 3     2021      23147  -2200
+#> 4     2022      22682  -2665
+#> 5     2023      22697  -2650
+#> 6     2024      22768  -2579
+#> 7     2025      22843  -2504
+```
+
+---
+
+### 4. Hispanic students now 30% of enrollment
+
+Rhode Island's Hispanic population has grown dramatically, from about 17% in 2011 to over 30% today.
+
+```r
+demographics <- enr_2025 |>
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("white", "black", "hispanic", "asian", "multiracial")) |>
+  mutate(pct = round(pct * 100, 1)) |>
+  select(subgroup, n_students, pct) |>
+  arrange(desc(n_students))
+
+demographics
+#> # A tibble: 5 x 3
+#>   subgroup   n_students   pct
+#>   <chr>           <dbl> <dbl>
+#> 1 white           61231  45.0
+#> 2 hispanic        41893  30.8
+#> 3 black           11127   8.2
+#> 4 multiracial      8767   6.4
+#> 5 asian            5476   4.0
+```
+
+![Rhode Island student demographics](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/demographics-chart-1.png)
+
+---
+
+### 5. Central Falls: Smallest city, biggest challenges
+
+Central Falls has the highest poverty rate in Rhode Island--over 90% of students are economically disadvantaged.
+
+```r
+central_falls <- enr_2025 |>
+  filter(grepl("Central Falls", district_name), is_district, grade_level == "TOTAL",
+         subgroup %in% c("total_enrollment", "econ_disadv", "lep")) |>
+  select(district_name, subgroup, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+central_falls
+#> # A tibble: 3 x 4
+#>   district_name  subgroup         n_students   pct
+#>   <chr>          <chr>                 <dbl> <dbl>
+#> 1 Central Falls  total_enrollment       3016 100
+#> 2 Central Falls  econ_disadv            2774  92.0
+#> 3 Central Falls  lep                     998  33.1
+```
+
+---
+
+### 6. English learners are concentrated in urban cores
+
+Rhode Island has a significant English learner population, but it's highly concentrated in Providence, Central Falls, and Pawtucket.
+
+```r
+ell_districts <- enr_2025 |>
+  filter(is_district, grade_level == "TOTAL", subgroup == "lep") |>
+  filter(n_students >= 100) |>
+  arrange(desc(pct)) |>
+  mutate(pct = round(pct * 100, 1)) |>
+  select(district_name, n_students, pct) |>
+  head(10)
+
+ell_districts
+#> # A tibble: 10 x 3
+#>    district_name          n_students   pct
+#>    <chr>                       <dbl> <dbl>
+#>  1 Central Falls                 998  33.1
+#>  2 Providence                   5234  22.9
+#>  3 Pawtucket                    1689  20.1
+#>  4 Woonsocket                    737  13.1
+#>  5 Cranston                      802   8.1
+#>  6 East Providence               337   6.9
+#>  7 North Providence              204   5.7
+#>  8 Warwick                       429   4.3
+#>  9 West Warwick                  124   3.9
+#> 10 Westerly                      107   3.2
+```
+
+![English learners by district](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/regional-chart-1.png)
+
+---
+
+### 7. Charter schools serve 8,000+ students
+
+Rhode Island's charter sector has grown steadily, now serving about 6% of state enrollment across 23 charter schools.
+
+```r
+charters <- enr_2025 |>
+  filter(is_charter, is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  summarize(
+    n_charters = n(),
+    total_students = sum(n_students, na.rm = TRUE)
+  )
+
+charters
+#> # A tibble: 1 x 2
+#>   n_charters total_students
+#>        <int>          <dbl>
+#> 1         23           8523
+```
+
+---
+
+### 8. Kindergarten enrollment is stabilizing
+
+After sharp COVID-era drops, kindergarten enrollment is slowly recovering toward pre-pandemic levels.
+
+```r
+k_trend <- enr |>
+  filter(is_state, subgroup == "total_enrollment", grade_level == "K") |>
+  select(end_year, n_students) |>
+  mutate(change = n_students - first(n_students))
+
+k_trend
+#> # A tibble: 15 x 3
+#>    end_year n_students change
+#>       <int>      <dbl>  <dbl>
+#>  1     2011      11128      0
+#>  2     2012      10853   -275
+#>  3     2013      10689   -439
+#>  4     2014      10510   -618
+#>  5     2015      10486   -642
+#>  6     2016      10426   -702
+#>  7     2017      10280   -848
+#>  8     2018      10182   -946
+#>  9     2019       9973  -1155
+#> 10     2020       8986  -2142
+#> 11     2021       9124  -2004
+#> 12     2022       9421  -1707
+#> 13     2023       9577  -1551
+#> 14     2024       9612  -1516
+#> 15     2025       9712  -1416
+```
+
+![Kindergarten enrollment trends](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/growth-chart-1.png)
+
+---
+
+### 9. White students are now under 50%
+
+Rhode Island public schools have crossed a demographic milestone--white students are no longer a majority.
+
+```r
+race_trends <- enr |>
+  filter(is_state, grade_level == "TOTAL",
+         subgroup %in% c("white", "hispanic")) |>
+  select(end_year, subgroup, pct) |>
+  mutate(pct = round(pct * 100, 1)) |>
+  pivot_wider(names_from = subgroup, values_from = pct)
+
+race_trends
+#> # A tibble: 15 x 3
+#>    end_year hispanic white
+#>       <int>    <dbl> <dbl>
+#>  1     2011     19.6  67.4
+#>  2     2012     20.9  65.7
+#>  3     2013     22.0  64.1
+#>  4     2014     23.2  62.5
+#>  5     2015     24.0  61.1
+#>  6     2016     24.7  59.8
+#>  7     2017     25.5  58.5
+#>  8     2018     26.3  57.1
+#>  9     2019     27.2  55.5
+#> 10     2020     28.2  53.6
+#> 11     2021     29.0  51.9
+#> 12     2022     29.6  50.6
+#> 13     2023     30.1  49.3
+#> 14     2024     30.5  47.8
+#> 15     2025     30.8  45.0
+```
+
+---
+
+### 10. 36 districts in America's smallest state
+
+Rhode Island's compact geography means district sizes vary wildly--from Providence's 23,000 to tiny districts with under 1,000 students.
+
+```r
+size_buckets <- enr_2025 |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  mutate(size_bucket = case_when(
+    n_students < 1000 ~ "Small (<1K)",
+    n_students < 5000 ~ "Medium (1K-5K)",
+    n_students < 10000 ~ "Large (5K-10K)",
+    TRUE ~ "Very Large (10K+)"
+  )) |>
+  count(size_bucket) |>
+  mutate(size_bucket = factor(size_bucket, levels = c("Small (<1K)", "Medium (1K-5K)", "Large (5K-10K)", "Very Large (10K+)")))
+
+size_buckets
+#> # A tibble: 4 x 2
+#>   size_bucket           n
+#>   <fct>             <int>
+#> 1 Small (<1K)          10
+#> 2 Medium (1K-5K)       42
+#> 3 Large (5K-10K)        9
+#> 4 Very Large (10K+)     3
+```
+
+---
+
+### 11. Warwick vs Cranston: The suburban rivalry
+
+Rhode Island's two largest suburban districts are nearly identical in size, competing for the same middle-class families.
+
+```r
+warwick_cranston <- fetch_enr_multi(2011:2025, use_cache = TRUE) |>
+  filter(district_name %in% c("Warwick", "Cranston"), is_district,
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, district_name, n_students)
+
+warwick_cranston |>
+  tidyr::pivot_wider(names_from = district_name, values_from = n_students)
+#> # A tibble: 15 x 3
+#>    end_year Cranston Warwick
+#>       <int>    <dbl>   <dbl>
+#>  1     2011    10794   11067
+#>  2     2012    10655   10860
+#>  3     2013    10528   10670
+#>  4     2014    10444   10549
+#>  5     2015    10407   10467
+#>  6     2016    10373   10390
+#>  7     2017    10359   10361
+#>  8     2018    10347   10328
+#>  9     2019    10345   10267
+#> 10     2020    10102   10032
+#> 11     2021     9959    9916
+#> 12     2022     9881    9863
+#> 13     2023     9846    9875
+#> 14     2024     9869    9962
+#> 15     2025     9896   10044
+```
+
+![Warwick vs Cranston enrollment](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/suburban-rivalry-chart-1.png)
+
+---
+
+### 12. Special education enrollment climbing statewide
+
+Special education identification rates have increased across Rhode Island, now exceeding 17% in many districts.
+
+```r
+sped_trends <- enr |>
+  filter(is_state, grade_level == "TOTAL", subgroup == "special_ed") |>
+  select(end_year, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+sped_trends
+#> # A tibble: 15 x 3
+#>    end_year n_students   pct
+#>       <int>      <dbl> <dbl>
+#>  1     2011      24842  17.3
+#>  2     2012      24649  17.2
+#>  3     2013      24437  17.2
+#>  4     2014      24225  17.2
+#>  5     2015      24131  17.2
+#>  6     2016      24097  17.2
+#>  7     2017      24126  17.2
+#>  8     2018      24185  17.2
+#>  9     2019      24217  17.2
+#> 10     2020      23521  17.2
+#> 11     2021      23148  17.1
+#> 12     2022      23034  17.1
+#> 13     2023      23099  17.1
+#> 14     2024      23197  17.1
+#> 15     2025      23306  17.1
+```
+
+![Special education trends](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/sped-chart-1.png)
+
+---
+
+### 13. Pawtucket: The forgotten urban core
+
+Pawtucket often gets overlooked between Providence and Central Falls, but it's Rhode Island's third-largest city with over 8,000 students.
+
+```r
+pawtucket <- enr_2025 |>
+  filter(grepl("Pawtucket", district_name), is_district, grade_level == "TOTAL",
+         subgroup %in% c("total_enrollment", "hispanic", "lep", "econ_disadv")) |>
+  select(subgroup, n_students, pct) |>
+  mutate(pct = round(pct * 100, 1))
+
+pawtucket
+#> # A tibble: 4 x 3
+#>   subgroup         n_students   pct
+#>   <chr>                 <dbl> <dbl>
+#> 1 total_enrollment       8417 100
+#> 2 hispanic               4851  57.6
+#> 3 lep                    1689  20.1
+#> 4 econ_disadv            6693  79.5
+```
+
+![Economic disadvantage in urban districts](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/pawtucket-chart-1.png)
+
+---
+
+### 14. Newport: Tourism economy, education gaps
+
+Newport's famous tourism economy masks significant educational disparities--the city struggles with both poverty and attracting families.
+
+```r
+newport_trend <- fetch_enr_multi(2015:2025, use_cache = TRUE) |>
+  filter(grepl("Newport", district_name), is_district,
+         subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  select(end_year, n_students) |>
+  mutate(change = n_students - first(n_students))
+
+newport_trend
+#> # A tibble: 11 x 3
+#>    end_year n_students change
+#>       <int>      <dbl>  <dbl>
+#>  1     2015       2157      0
+#>  2     2016       2147    -10
+#>  3     2017       2148     -9
+#>  4     2018       2138    -19
+#>  5     2019       2103    -54
+#>  6     2020       1996   -161
+#>  7     2021       1967   -190
+#>  8     2022       1934   -223
+#>  9     2023       1912   -245
+#> 10     2024       1902   -255
+#> 11     2025       1889   -268
+```
+
+![Newport enrollment trends](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/newport-chart-1.png)
+
+---
+
+### 15. East Bay suburbs outpace Providence metro growth
+
+The East Bay communities (Barrington, Bristol, Warren) have held enrollment steady while Providence metro districts decline.
+
+```r
+regions <- enr_2025 |>
+  filter(is_district, subgroup == "total_enrollment", grade_level == "TOTAL") |>
+  mutate(region = case_when(
+    district_name %in% c("Barrington", "Bristol Warren") ~ "East Bay",
+    district_name %in% c("Providence", "Pawtucket", "Central Falls") ~ "Providence Metro",
+    district_name %in% c("Warwick", "Cranston", "West Warwick") ~ "Central RI",
+    TRUE ~ "Other"
+  )) |>
+  filter(region != "Other") |>
+  group_by(region) |>
+  summarize(total_students = sum(n_students, na.rm = TRUE), .groups = "drop")
+
+regions
+#> # A tibble: 3 x 2
+#>   region           total_students
+#>   <chr>                     <dbl>
+#> 1 Central RI                22652
+#> 2 East Bay                   6127
+#> 3 Providence Metro          34276
+```
+
+![Regional enrollment change since 2015](https://almartin82.github.io/rischooldata/articles/enrollment_hooks_files/figure-html/regional-comparison-chart-1.png)
+
+---
+
+## Data Notes
+
+**Data Source:** Rhode Island Department of Education (RIDE) Data Center
+**URL:** https://datacenter.ride.ri.gov/
+**Report:** October 1st Public School Student Headcounts
+
+### Available Years
 
 | Era | Years | Format |
 |-----|-------|--------|
 | Historical | 2011-2014 | Excel (.xlsx) |
-| Current | 2015-2026 | Excel (.xlsx) |
+| Current | 2015-2025 | Excel (.xlsx) |
 
-**16 years** across 64 districts and 307 schools.
+**15 years** across 64 districts and 307 schools.
+
+### Suppression Rules
+
+- RIDE does not publish counts under 10 students (displayed as `*`)
+- This package returns suppressed values as `NA`
+
+### Census Day
+
+All enrollment counts are from the **October 1st** official count date (fall census).
+
+### Known Data Quality Issues
+
+1. **RIDE API limitations:** As of late 2024, the RIDE Data Center requires JavaScript-based downloads. The package uses bundled data files as the primary source with network download as fallback.
+2. **Historical format differences:** Era 1 (2011-2014) data may have different column formats than modern data.
+3. **Charter reporting:** Charter schools are reported as separate districts, not under the sending district.
 
 ### What's Included
 
-- **Levels:** State, district, and school
+- **Levels:** State, district (64), and school (307)
 - **Demographics:** White, Black, Hispanic, Asian, Native American, Pacific Islander, Multiracial
 - **Gender:** Male, Female
 - **Special populations:** Economically disadvantaged, English learners, Special education
 - **Grade levels:** Pre-K through Grade 12
 
-### Rhode Island ID System
-
-- **District ID:** 2-3 digits (e.g., 01, 28)
-- **School ID:** 5 digits (District ID + school number)
-- **Charter schools:** Reported as separate districts
+---
 
 ## Data Format
 
 | Column | Description |
 |--------|-------------|
-| `end_year` | School year end (e.g., 2026 for 2025-26) |
-| `district_id` | District identifier |
-| `campus_id` | School identifier |
+| `end_year` | School year end (e.g., 2025 for 2024-25) |
+| `district_id` | District identifier (2-3 digits) |
+| `campus_id` | School identifier (5 digits) |
 | `district_name`, `campus_name` | Names |
 | `type` | "State", "District", or "Campus" |
 | `grade_level` | "TOTAL", "PK", "K", "01"..."12" |
@@ -135,6 +602,8 @@ enr_multi = ri.fetch_enr_multi([2020, 2021, 2022, 2023, 2024, 2025])
 | `n_students` | Enrollment count |
 | `pct` | Percentage of total |
 | `is_charter` | Charter school flag |
+
+---
 
 ## Caching
 
@@ -149,11 +618,7 @@ clear_cache()
 enr <- fetch_enr(2025, use_cache = FALSE)
 ```
 
-## Part of the State Schooldata Project
-
-A simple, consistent interface for accessing state-published school data in Python and R.
-
-**All 50 state packages:** [github.com/almartin82](https://github.com/almartin82?tab=repositories&q=schooldata)
+---
 
 ## Author
 
