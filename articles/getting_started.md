@@ -306,6 +306,6 @@ sessionInfo()
 #> [21] fastmap_1.2.0     yaml_2.3.12       lifecycle_1.0.5   compiler_4.5.2   
 #> [25] codetools_0.2-20  fs_1.6.6          pkgconfig_2.0.3   systemfonts_1.3.1
 #> [29] digest_0.6.39     R6_2.6.1          tidyselect_1.2.1  pillar_1.11.1    
-#> [33] magrittr_2.0.4    bslib_0.9.0       withr_3.0.2       tools_4.5.2      
+#> [33] magrittr_2.0.4    bslib_0.10.0      withr_3.0.2       tools_4.5.2      
 #> [37] pkgdown_2.2.0     cachem_1.1.0      desc_1.4.3
 ```
