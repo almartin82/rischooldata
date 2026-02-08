@@ -678,7 +678,7 @@ sessionInfo()
 #> [1] stats     graphics  grDevices utils     datasets  methods   base     
 #> 
 #> other attached packages:
-#> [1] ggplot2_4.0.1      tidyr_1.3.2        dplyr_1.1.4        rischooldata_0.1.0
+#> [1] ggplot2_4.0.2      tidyr_1.3.2        dplyr_1.2.0        rischooldata_0.1.0
 #> 
 #> loaded via a namespace (and not attached):
 #>  [1] gtable_0.3.6       jsonlite_2.0.0     compiler_4.5.2     tidyselect_1.2.1  
@@ -688,7 +688,7 @@ sessionInfo()
 #> [17] tibble_3.3.1       desc_1.4.3         bslib_0.10.0       pillar_1.11.1     
 #> [21] RColorBrewer_1.1-3 rlang_1.1.7        utf8_1.2.6         cachem_1.1.0      
 #> [25] xfun_0.56          fs_1.6.6           sass_0.4.10        S7_0.2.1          
-#> [29] viridisLite_0.4.2  cli_3.6.5          withr_3.0.2        pkgdown_2.2.0     
+#> [29] viridisLite_0.4.3  cli_3.6.5          withr_3.0.2        pkgdown_2.2.0     
 #> [33] magrittr_2.0.4     digest_0.6.39      grid_4.5.2         rappdirs_0.3.4    
 #> [37] lifecycle_1.0.5    vctrs_0.7.1        evaluate_1.0.5     glue_1.8.0        
 #> [41] cellranger_1.1.0   farver_2.1.2       codetools_0.2-20   ragg_1.5.0        
